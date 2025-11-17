@@ -77,7 +77,7 @@ def main():
         # 모델 선택
         model_option = st.selectbox(
             "LLM 모델",
-            ["llama3.2:3b", "mistral:7b", "gemma:7b"],
+            ["llama3.1:8b", "llama3.2:3b", "mistral:7b", "gemma:7b"],
             help="Ollama에서 다운로드한 모델을 선택하세요"
         )
 
