@@ -60,8 +60,8 @@ async def start():
     try:
         logger.info("=== Starting RAG pipeline initialization ===")
 
-        # 기본 설정
-        model_name = "llama3.1:8b"
+        # 기본 설정 (Railway 무료 플랜용 경량 모델)
+        model_name = "llama3.2:3b"
         temperature = 0.7
         use_reranking = True
 
