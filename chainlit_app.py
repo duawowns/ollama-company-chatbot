@@ -1,21 +1,37 @@
 """
 퓨쳐시스템 회사소개 챗봇 (Chainlit 버전)
 RAG 챗봇 - ChromaDB + BGE-M3 + FlashRank + Ollama
+프로덕션 버전: 인증 + Rate Limiting + 로깅
 """
 
 import chainlit as cl
 from pathlib import Path
 import logging
 import sys
+import os
 
 # 프로젝트 루트를 Python 경로에 추가
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
 from utils.rag_pipeline import RAGPipeline
+from utils.rate_limiter import get_rate_limiter
 
-# 로깅 설정
-logging.basicConfig(level=logging.INFO)
+# 인증 설정 (선택적)
+AUTH_ENABLED = os.getenv("AUTH_ENABLED", "false").lower() == "true"
+if AUTH_ENABLED:
+    from utils.auth import auth_callback  # 인증 활성화 시에만 import
+
+# 로깅 설정 (구조화된 로깅)
+log_level = os.getenv("LOG_LEVEL", "INFO")
+logging.basicConfig(
+    level=getattr(logging, log_level),
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler('chatbot.log')
+    ]
+)
 logger = logging.getLogger(__name__)
 
 
@@ -68,7 +84,27 @@ async def start():
 
 @cl.on_message
 async def main(message: cl.Message):
-    """메시지 수신 시 호출"""
+    """메시지 수신 시 호출 (Rate Limiting 포함)"""
+    # 사용자 식별
+    user = cl.user_session.get("user")
+    user_id = user.identifier if user else "anonymous"
+
+    # Rate Limiting 확인
+    rate_limiter = get_rate_limiter()
+    allowed, error_msg = rate_limiter.is_allowed(user_id)
+
+    if not allowed:
+        await cl.Message(
+            content=f"⚠️ {error_msg}",
+            author="System"
+        ).send()
+        logger.warning(f"Rate limit exceeded for user {user_id}")
+        return
+
+    # 사용량 통계 로깅
+    stats = rate_limiter.get_usage_stats(user_id)
+    logger.info(f"User {user_id} usage: {stats['requests_last_minute']}/{stats['limit_per_minute']} per min")
+
     # RAG 파이프라인 가져오기
     rag_pipeline = cl.user_session.get("rag_pipeline")
 
@@ -110,10 +146,13 @@ async def main(message: cl.Message):
         })
         cl.user_session.set("chat_history", chat_history)
 
+        # 성공 로깅
+        logger.info(f"Query processed successfully for user {user_id}: {len(message.content)} chars -> {len(full_response)} chars")
+
     except Exception as e:
         error_msg = f"❌ 오류가 발생했습니다: {str(e)}"
         await cl.Message(content=error_msg, author="System").send()
-        logger.error(f"질의 처리 오류: {e}", exc_info=True)
+        logger.error(f"질의 처리 오류 (user: {user_id}): {e}", exc_info=True)
 
 
 @cl.on_settings_update
