@@ -11,22 +11,20 @@
 
 ## 기술 스택
 
-### Backend
+### Core
 - Python 3.14+
-- FastAPI 0.121+
-- Ollama 0.9+
-- LangChain, RAG
+- Streamlit (웹 UI)
+- Ollama 0.9+ (LLM)
+- LangChain (RAG 프레임워크)
 
-### Frontend
-- Next.js 16
-- React
-
-### Data
+### Data & ML
 - Hugging Face Datasets
 - FAISS Vector Store
+- Sentence Transformers
 
 ### Deployment
-- Docker
+- ngrok (터널링)
+- Docker (선택사항)
 
 ## 주요 기능
 
@@ -39,40 +37,57 @@
 
 ```
 ollama-company-chatbot/
-├── backend/
-│   ├── app/
-│   │   ├── api/          # API endpoints
-│   │   ├── core/         # Configuration
-│   │   ├── models/       # Data models
-│   │   └── services/     # Business logic
-│   └── tests/
-├── frontend/
-├── data/
-│   ├── raw/
-│   ├── processed/
-│   └── datasets/
-├── docs/
-└── scripts/
+├── app.py                # Streamlit 메인 앱
+├── requirements.txt      # Python 패키지
+├── run.sh               # 실행 스크립트
+├── utils/               # 유틸리티 함수
+│   ├── rag_pipeline.py  # RAG 파이프라인
+│   └── data_loader.py   # 데이터 로더
+├── config/              # 설정 파일
+├── data/                # 데이터셋
+│   ├── raw/             # 원본 CSV, PDF
+│   ├── processed/       # 전처리 데이터
+│   └── vectorstore/     # FAISS 인덱스
+├── docs/                # 문서
+└── scripts/             # 학습 및 전처리 스크립트
+    └── train_embedding.py
 ```
 
 ## 설치 및 실행
 
-### Backend Setup
+### 1. 환경 설정
 
 ```bash
-cd backend
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload
 ```
 
-### Frontend Setup
+### 2. Ollama 설치 및 모델 다운로드
 
 ```bash
-cd frontend
-npm install
-npm run dev
+# Ollama 설치
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 모델 다운로드
+ollama pull llama3.2:3b
+```
+
+### 3. 애플리케이션 실행
+
+```bash
+# Streamlit 앱 실행
+streamlit run app.py
+
+# 또는 실행 스크립트 사용
+./run.sh
+```
+
+### 4. ngrok으로 외부 공개 (선택사항)
+
+```bash
+# ngrok 설치 후
+ngrok http 8501
 ```
 
 ## 개발 진행 상황
