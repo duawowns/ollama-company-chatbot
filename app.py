@@ -211,10 +211,15 @@ st.markdown("""
     .footer {
         text-align: center;
         color: #6b7280;
-        font-size: 0.75rem;
-        margin-top: 3rem;
-        padding: 1.5rem 0;
+        font-size: 0.7rem;
+        padding: 1rem 0;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 260px;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
     }
 
     /* 에러/경고 메시지 */
