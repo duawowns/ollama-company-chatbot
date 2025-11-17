@@ -275,7 +275,7 @@
 
         .architecture-canvas {
             position: relative;
-            height: 480mm;
+            height: 500mm;
             background:
                 radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)),
                 linear-gradient(135deg, rgba(30, 136, 229, 0.05), rgba(255, 107, 53, 0.05));
@@ -373,12 +373,87 @@
             filter: drop-shadow(0 0 10px currentColor);
         }
 
+        /* 작업물 섹션 */
+        .showcase {
+            margin: 20mm 0;
+            padding: 20mm 0;
+            border-top: 3px solid rgba(0, 217, 255, 0.3);
+            border-bottom: 3px solid rgba(0, 217, 255, 0.3);
+        }
+
+        .showcase-title {
+            font-size: 36pt;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00E5FF, #FF6B35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 15mm;
+        }
+
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15mm;
+        }
+
+        .showcase-item {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.08), rgba(30, 136, 229, 0.08));
+            border: 2px solid rgba(0, 217, 255, 0.3);
+            border-radius: 8mm;
+            padding: 12mm;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .showcase-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00E5FF, #1E88E5);
+        }
+
+        .showcase-label {
+            font-size: 22pt;
+            font-weight: 600;
+            color: #00E5FF;
+            margin-bottom: 8mm;
+        }
+
+        .showcase-placeholder {
+            width: 100%;
+            height: 80mm;
+            background:
+                linear-gradient(135deg, rgba(30, 136, 229, 0.2), rgba(0, 217, 255, 0.2)),
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(255, 255, 255, 0.05),
+                    rgba(255, 255, 255, 0.05) 10px,
+                    transparent 10px,
+                    transparent 20px
+                );
+            border-radius: 6mm;
+            border: 2px dashed rgba(0, 217, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18pt;
+            color: #90A4AE;
+            font-style: italic;
+        }
+
         /* 푸터 */
         footer {
             text-align: center;
             padding: 15mm 0;
             border-top: 3px solid rgba(0, 217, 255, 0.5);
             position: relative;
+            background: transparent;
         }
 
         .footer-ornament {
@@ -412,12 +487,13 @@
         }
 
         .effect-card {
-            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(30, 136, 229, 0.1));
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.12), rgba(30, 136, 229, 0.12));
             border: 2px solid rgba(0, 217, 255, 0.3);
             border-radius: 6mm;
             padding: 8mm;
             font-size: 18pt;
             text-align: center;
+            color: white;
         }
 
         .effect-icon {
@@ -534,7 +610,7 @@
                     </div>
 
                     <!-- Layer 4: Data Source -->
-                    <div class="node layer-4" style="top: 390mm; left: 50%; transform: translateX(-50%);">
+                    <div class="node layer-4" style="top: 405mm; left: 50%; transform: translateX(-50%);">
                         Data Sources<br>(CSV / PDF)
                     </div>
 
@@ -567,8 +643,8 @@
                         <path d="M 80% 220mm L 80% 310mm" class="connection-line" stroke="url(#grad-cyan)" />
 
                         <!-- Data Layer to Source -->
-                        <path d="M 20% 340mm Q 30% 370mm, 50% 425mm" class="connection-line" stroke="url(#grad-blue)" />
-                        <path d="M 80% 340mm Q 70% 370mm, 50% 425mm" class="connection-line" stroke="url(#grad-blue)" />
+                        <path d="M 20% 340mm Q 30% 380mm, 50% 440mm" class="connection-line" stroke="url(#grad-blue)" />
+                        <path d="M 80% 340mm Q 70% 380mm, 50% 440mm" class="connection-line" stroke="url(#grad-blue)" />
                     </svg>
                 </div>
             </div>
@@ -590,6 +666,25 @@
                 </div>
             </div>
         </div>
+
+        <!-- 작업물 섹션 -->
+        <section class="showcase">
+            <div class="showcase-title">프로젝트 작업물</div>
+            <div class="showcase-grid">
+                <div class="showcase-item">
+                    <div class="showcase-label">Streamlit 사용자 인터페이스</div>
+                    <div class="showcase-placeholder">
+                        [ 채팅 UI 스크린샷 ]
+                    </div>
+                </div>
+                <div class="showcase-item">
+                    <div class="showcase-label">RAG 파이프라인 구현</div>
+                    <div class="showcase-placeholder">
+                        [ 코드 또는 플로우차트 ]
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- 푸터 -->
         <footer>
