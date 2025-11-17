@@ -18,11 +18,11 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Data 디렉토리 먼저 복사 (vectorstore 포함)
+COPY --chown=chatbot:chatbot data/ /app/data/
+
 # 애플리케이션 코드 복사
 COPY --chown=chatbot:chatbot . .
-
-# Vectorstore 복사 확인 (명시적)
-COPY --chown=chatbot:chatbot data/vectorstore /app/data/vectorstore
 
 # 환경변수 설정
 ENV PYTHONUNBUFFERED=1
