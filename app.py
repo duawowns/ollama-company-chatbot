@@ -28,133 +28,185 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Linear 스타일 커스텀 CSS
+# Google AI Studio 스타일 커스텀 CSS
 st.markdown("""
 <style>
-    /* 전체 배경 */
+    @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+
+    /* 전체 배경 - 밝은 테마 */
     .stApp {
-        background: linear-gradient(135deg, #0A1929 0%, #0D2137 100%);
+        background: #f8f9fa;
+        font-family: 'Google Sans', 'Segoe UI', sans-serif;
     }
 
     /* 메인 컨테이너 */
     .main .block-container {
-        padding-top: 2rem;
+        padding-top: 3rem;
         padding-bottom: 2rem;
-        max-width: 900px;
+        max-width: 800px;
     }
 
     /* 제목 스타일 */
     h1 {
-        color: rgba(255, 255, 255, 0.98);
-        font-weight: 600;
+        color: #202124;
+        font-weight: 500;
         letter-spacing: -0.5px;
-        font-size: 2rem !important;
+        font-size: 2.25rem !important;
         margin-bottom: 0.5rem;
+        font-family: 'Google Sans', sans-serif;
     }
 
     /* 부제목 */
     .subtitle {
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 0.95rem;
-        margin-bottom: 2rem;
+        color: #5f6368;
+        font-size: 1rem;
+        margin-bottom: 2.5rem;
+        font-weight: 400;
     }
 
-    /* 채팅 메시지 */
+    /* 채팅 메시지 - Google 스타일 */
     .stChatMessage {
-        background: rgba(255, 255, 255, 0.03);
-        border: 0.5px solid rgba(255, 255, 255, 0.08);
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 0.5rem;
+        background: transparent;
+        border: none;
+        border-radius: 24px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
     }
 
     /* 사용자 메시지 */
+    .stChatMessage[data-testid*="user"] {
+        background: #e8f0fe;
+        margin-left: 2rem;
+    }
+
+    /* AI 메시지 */
+    .stChatMessage[data-testid*="assistant"] {
+        background: #fff;
+        border: 1px solid #e8eaed;
+        margin-right: 2rem;
+    }
+
     [data-testid="stChatMessageContent"] {
-        color: rgba(255, 255, 255, 0.95);
+        color: #202124;
+        font-size: 0.95rem;
+        line-height: 1.6;
     }
 
-    /* 입력창 */
+    /* 입력창 - 하단 고정 스타일 */
     .stChatInput {
-        border: 0.5px solid rgba(255, 255, 255, 0.12);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.04);
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        border: 1px solid #dadce0;
+        border-radius: 24px;
+        padding: 0.5rem;
+        box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
     }
 
-    /* 사이드바 */
+    .stChatInput textarea {
+        border: none !important;
+        font-size: 0.95rem;
+        color: #202124;
+    }
+
+    /* 사이드바 - Google 스타일 */
     [data-testid="stSidebar"] {
-        background: rgba(10, 25, 41, 0.6);
-        backdrop-filter: blur(10px);
-        border-right: 0.5px solid rgba(255, 255, 255, 0.06);
+        background: #fff;
+        border-right: 1px solid #e8eaed;
+        padding-top: 1rem;
     }
 
     [data-testid="stSidebar"] h2 {
-        color: rgba(255, 255, 255, 0.98);
-        font-size: 1.1rem;
+        color: #202124;
+        font-size: 1rem;
         font-weight: 500;
+        padding-left: 1rem;
+        margin-bottom: 1rem;
     }
 
-    /* 버튼 */
+    /* 버튼 - Google Material Design */
     .stButton button {
-        background: rgba(255, 255, 255, 0.04);
-        border: 0.5px solid rgba(255, 255, 255, 0.12);
-        border-radius: 6px;
-        color: rgba(255, 255, 255, 0.95);
-        font-weight: 400;
+        background: #fff;
+        border: 1px solid #dadce0;
+        border-radius: 20px;
+        color: #1a73e8;
+        font-weight: 500;
+        padding: 0.5rem 1.5rem;
         transition: all 0.2s;
+        box-shadow: none;
     }
 
     .stButton button:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.2);
+        background: #f8f9fa;
+        border-color: #dadce0;
+        box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3);
     }
 
-    /* 셀렉트박스, 슬라이더 */
-    .stSelectbox, .stSlider {
-        color: rgba(255, 255, 255, 0.95);
+    /* 셀렉트박스 */
+    .stSelectbox {
+        background: #fff;
     }
 
-    /* 메트릭 */
-    [data-testid="stMetric"] {
-        background: rgba(255, 255, 255, 0.03);
-        border: 0.5px solid rgba(255, 255, 255, 0.08);
-        border-radius: 6px;
-        padding: 0.75rem;
+    .stSelectbox > div > div {
+        background: #fff;
+        border: 1px solid #dadce0;
+        border-radius: 8px;
+        color: #202124;
     }
 
-    [data-testid="stMetricValue"] {
-        color: rgba(0, 217, 255, 0.9);
-        font-size: 1.5rem;
+    /* 슬라이더 */
+    .stSlider {
+        padding-top: 1rem;
     }
 
-    /* Info 박스 */
-    .stAlert {
-        background: rgba(255, 255, 255, 0.02);
-        border: 0.5px solid rgba(255, 255, 255, 0.08);
-        border-radius: 6px;
-        color: rgba(255, 255, 255, 0.8);
+    .stSlider > div > div > div {
+        color: #1a73e8;
     }
 
-    /* 워닝 박스 */
-    .stWarning {
-        background: rgba(255, 107, 53, 0.06);
-        border: 0.5px solid rgba(255, 107, 53, 0.3);
+    /* 체크박스 */
+    .stCheckbox {
+        color: #202124;
+    }
+
+    .stCheckbox > label {
+        font-size: 0.9rem;
     }
 
     /* 구분선 */
     hr {
-        border-color: rgba(255, 255, 255, 0.06);
+        border-color: #e8eaed;
         margin: 1.5rem 0;
+    }
+
+    /* 라벨 텍스트 */
+    label {
+        color: #5f6368 !important;
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
     }
 
     /* 푸터 */
     .footer {
         text-align: center;
-        color: rgba(255, 255, 255, 0.4);
+        color: #5f6368;
         font-size: 0.85rem;
-        margin-top: 2rem;
-        padding: 1rem;
-        border-top: 0.5px solid rgba(255, 255, 255, 0.06);
+        margin-top: 3rem;
+        padding: 1.5rem;
+        border-top: 1px solid #e8eaed;
     }
+
+    /* 에러/경고 메시지 */
+    .stAlert {
+        background: #fef7e0;
+        border: 1px solid #f9ab00;
+        border-radius: 8px;
+        color: #202124;
+    }
+
+    /* 숨기기: Streamlit 기본 요소 */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
