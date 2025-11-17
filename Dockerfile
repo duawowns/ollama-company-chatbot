@@ -44,8 +44,8 @@ USER chatbot
 # 포트 노출
 EXPOSE 8501
 
-# 헬스체크 (모델 다운로드 시간 고려)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
+# 헬스체크 (모델 다운로드 시간 고려 - 5분 유예)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=300s --retries=5 \
     CMD curl -f http://localhost:8501/ || exit 1
 
 # Chainlit 실행 (모델은 첫 실행 시 자동 다운로드)

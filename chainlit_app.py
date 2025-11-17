@@ -34,18 +34,32 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# 앱 시작 시 로그 출력
+logger.info("=" * 50)
+logger.info("Chainlit App Starting...")
+logger.info(f"Project root: {project_root}")
+logger.info(f"Vectorstore path: {project_root / 'data' / 'vectorstore'}")
+logger.info(f"Vectorstore exists: {(project_root / 'data' / 'vectorstore').exists()}")
+logger.info(f"OLLAMA_BASE_URL: {os.getenv('OLLAMA_BASE_URL', 'not set')}")
+logger.info("=" * 50)
+
 
 @cl.on_chat_start
 async def start():
     """채팅 시작 시 호출"""
     # RAG 파이프라인 초기화 (백그라운드)
     try:
+        logger.info("=== Starting RAG pipeline initialization ===")
+
         # 기본 설정
         model_name = "llama3.1:8b"
         temperature = 0.7
         use_reranking = True
 
+        logger.info(f"Model: {model_name}, Temperature: {temperature}, Reranking: {use_reranking}")
+
         # RAG 파이프라인 생성
+        logger.info("Creating RAG pipeline...")
         pipeline = RAGPipeline(
             model_name=model_name,
             temperature=temperature,
@@ -54,14 +68,19 @@ async def start():
 
         # 벡터 스토어 로드
         vectorstore_path = project_root / "data" / "vectorstore"
+        logger.info(f"Checking vectorstore path: {vectorstore_path}")
+        logger.info(f"Vectorstore exists: {vectorstore_path.exists()}")
 
         if not vectorstore_path.exists():
+            error_msg = f"❌ 데이터베이스를 찾을 수 없습니다. Path: {vectorstore_path}"
+            logger.error(error_msg)
             await cl.Message(
                 content="❌ 데이터베이스를 찾을 수 없습니다. 관리자에게 문의하세요.",
                 author="System"
             ).send()
             return
 
+        logger.info("Loading vectorstore...")
         pipeline.load_vectorstore(str(vectorstore_path))
 
         # QA 체인 생성
