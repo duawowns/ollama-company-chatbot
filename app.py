@@ -213,7 +213,7 @@ st.markdown("""
         color: #6b7280;
         font-size: 0.7rem;
         padding: 1rem 0.5rem;
-        margin: 0 -1rem;
+        margin-top: 2rem;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
@@ -310,8 +310,8 @@ def main():
             st.session_state.messages = []
             st.rerun()
 
-        # 푸터 - 하단으로 밀기
-        st.markdown("<br>" * 10, unsafe_allow_html=True)
+        # 푸터
+        st.markdown("---")
         st.markdown(
             '<div class="footer">'
             '© 2025 퓨쳐시스템 | 동서울대학교 캡스톤디자인 프로젝트'
