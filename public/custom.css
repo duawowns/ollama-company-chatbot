@@ -18,3 +18,61 @@ img[alt*="logo"],
   max-height: 40px;
   width: auto;
 }
+
+/* 퓨쳐시스템 브랜드 색상 적용 */
+:root {
+  --primary-color: #063f6e;
+  --primary-hover: #084d88;
+  --primary-active: #05366b;
+}
+
+/* 버튼 색상 */
+button[type="submit"],
+button.primary,
+.MuiButton-contained,
+.MuiButton-containedPrimary,
+button[class*="primary"],
+button[class*="Primary"] {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+button[type="submit"]:hover,
+button.primary:hover,
+.MuiButton-contained:hover,
+.MuiButton-containedPrimary:hover,
+button[class*="primary"]:hover,
+button[class*="Primary"]:hover {
+  background-color: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+}
+
+button[type="submit"]:active,
+button.primary:active,
+.MuiButton-contained:active,
+.MuiButton-containedPrimary:active,
+button[class*="primary"]:active,
+button[class*="Primary"]:active {
+  background-color: var(--primary-active) !important;
+  border-color: var(--primary-active) !important;
+}
+
+/* 전송 버튼 */
+button[aria-label*="Send"],
+button[aria-label*="전송"] {
+  background-color: var(--primary-color) !important;
+}
+
+button[aria-label*="Send"]:hover,
+button[aria-label*="전송"]:hover {
+  background-color: var(--primary-hover) !important;
+}
+
+/* 링크 색상 */
+a {
+  color: var(--primary-color) !important;
+}
+
+a:hover {
+  color: var(--primary-hover) !important;
+}
