@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 st.set_page_config(
     page_title="퓨쳐시스템",
     page_icon="🔒",
-    layout="centered",
+    layout="wide",
     initial_sidebar_state="expanded"
 )
 
