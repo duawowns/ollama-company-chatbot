@@ -100,12 +100,9 @@ st.markdown("""
 
     /* 입력창 - Linear 스타일 */
     .stChatInput {
-        position: sticky;
-        bottom: 0;
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 8px;
-        padding: 0.5rem;
         backdrop-filter: blur(10px);
     }
 
