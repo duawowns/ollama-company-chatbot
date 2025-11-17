@@ -276,7 +276,6 @@ def main():
 
     # 제목
     st.title("퓨쳐시스템 인트라넷 챗봇")
-    st.markdown('<p class="subtitle">정보보호 전문기업 · AI 어시스턴트</p>', unsafe_allow_html=True)
 
     # 사이드바
     with st.sidebar:
