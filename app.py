@@ -207,19 +207,14 @@ st.markdown("""
         letter-spacing: 0.01em;
     }
 
-    /* 푸터 */
+    /* 푸터 - 사이드바용 */
     .footer {
         text-align: center;
         color: #6b7280;
         font-size: 0.7rem;
-        padding: 1rem 0;
+        padding: 1rem 0.5rem;
+        margin: 0 -1rem;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 260px;
-        background: rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(10px);
     }
 
     /* 에러/경고 메시지 */
@@ -315,8 +310,8 @@ def main():
             st.session_state.messages = []
             st.rerun()
 
-        # 푸터
-        st.markdown("---")
+        # 푸터 - 하단으로 밀기
+        st.markdown("<br>" * 10, unsafe_allow_html=True)
         st.markdown(
             '<div class="footer">'
             '© 2025 퓨쳐시스템 | 동서울대학교 캡스톤디자인 프로젝트'
