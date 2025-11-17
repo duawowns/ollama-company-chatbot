@@ -182,6 +182,17 @@ st.markdown("""
         background: #6366f1;
     }
 
+    /* 슬라이더 값 텍스트 */
+    .stSlider [data-testid="stTickBar"] > div {
+        color: #8a8f98 !important;
+    }
+
+    .stSlider [data-testid="stThumbValue"] {
+        color: #e6e6e6 !important;
+        background: rgba(99, 102, 241, 0.2) !important;
+        border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    }
+
     /* 체크박스 */
     .stCheckbox {
         color: #e6e6e6;
