@@ -174,10 +174,6 @@ st.markdown("""
         padding-top: 1rem;
     }
 
-    .stSlider > div > div > div > div {
-        background: #6366f1;
-    }
-
     /* 슬라이더 값 텍스트 */
     .stSlider [data-testid="stTickBar"] > div {
         color: #8a8f98 !important;
