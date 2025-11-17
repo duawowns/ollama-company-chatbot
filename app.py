@@ -310,6 +310,15 @@ def main():
             st.session_state.messages = []
             st.rerun()
 
+        # 푸터
+        st.markdown("---")
+        st.markdown(
+            '<div class="footer">'
+            '© 2025 퓨쳐시스템 | 동서울대학교 캡스톤디자인 프로젝트'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
     # 세션 상태 초기화
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -366,14 +375,6 @@ def main():
                     "role": "assistant",
                     "content": "죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
                 })
-
-    # 푸터
-    st.markdown(
-        f'<div class="footer">'
-        f'© 2025 퓨쳐시스템 | 동서울대학교 캡스톤디자인 프로젝트'
-        f'</div>',
-        unsafe_allow_html=True
-    )
 
 
 if __name__ == "__main__":
