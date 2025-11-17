@@ -29,3 +29,4 @@ pydantic-settings==2.7.0
 
 # Performance & Caching
 diskcache==5.6.3
+chainlit==2.9.0

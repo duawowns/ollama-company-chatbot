@@ -13,7 +13,8 @@
 
 ### Core Framework
 - **Python** 3.10+
-- **Streamlit** 1.41.1 (웹 UI)
+- **Chainlit** 2.9.0 (웹 UI - 챗봇 전용) ⭐ **추천**
+- **Streamlit** 1.41.1 (웹 UI - 레거시)
 - **Ollama** 0.9+ (LLM)
 - **LangChain** 0.3.13 (RAG 프레임워크)
 
@@ -40,21 +41,25 @@
 
 ```
 ollama-company-chatbot/
-├── app.py                      # Streamlit 메인 앱 (스트리밍 지원)
+├── chainlit_app.py             # Chainlit 메인 앱 ⭐ 추천
+├── app.py                      # Streamlit 메인 앱 (레거시)
+├── run_chainlit.sh             # Chainlit 실행 스크립트
+├── run.sh                      # Streamlit 실행 스크립트
 ├── requirements.txt            # Python 패키지 (2025 최신)
-├── run.sh                     # 실행 스크립트
-├── utils/                     # 유틸리티
-│   └── rag_pipeline.py        # RAG 파이프라인 (ChromaDB + BGE-M3 + FlashRank)
-├── data/                      # 데이터
-│   ├── raw/                   # 원본 데이터
-│   │   └── company_info.txt   # 퓨쳐시스템 회사 정보
-│   ├── datasets/              # 데이터셋
-│   │   └── company_qa.csv     # 83개 Q&A 데이터
-│   └── vectorstore/           # ChromaDB 벡터 스토어
-├── docs/                      # 문서
+├── .chainlit/                  # Chainlit 설정
+│   └── config.toml             # UI 테마 및 색상 설정
+├── utils/                      # 유틸리티
+│   └── rag_pipeline.py         # RAG 파이프라인 (ChromaDB + BGE-M3 + FlashRank)
+├── data/                       # 데이터
+│   ├── raw/                    # 원본 데이터
+│   │   └── company_info.txt    # 퓨쳐시스템 회사 정보
+│   ├── datasets/               # 데이터셋
+│   │   └── company_qa.csv      # 83개 Q&A 데이터
+│   └── vectorstore/            # ChromaDB 벡터 스토어
+├── docs/                       # 문서
 │   └── capstone_poster_final.html  # 캡스톤 전시 판넬
-└── scripts/                   # 스크립트
-    └── create_vectorstore.py  # 벡터 스토어 생성
+└── scripts/                    # 스크립트
+    └── create_vectorstore.py   # 벡터 스토어 생성
 ```
 
 ## 설치 및 실행
@@ -112,6 +117,21 @@ ChromaDB 벡터 스토어 생성 시작
 
 ### 4. 애플리케이션 실행
 
+#### ⭐ Chainlit 버전 (추천)
+
+```bash
+# Chainlit 앱 실행
+chainlit run chainlit_app.py -w --port 8501
+
+# 또는 실행 스크립트 사용
+chmod +x run_chainlit.sh
+./run_chainlit.sh
+```
+
+브라우저에서 `http://localhost:8501` 접속
+
+#### Streamlit 버전 (레거시)
+
 ```bash
 # Streamlit 앱 실행
 streamlit run app.py
@@ -120,8 +140,6 @@ streamlit run app.py
 chmod +x run.sh
 ./run.sh
 ```
-
-브라우저에서 `http://localhost:8501` 접속
 
 ### 5. ngrok으로 외부 공개 (선택사항)
 
@@ -132,11 +150,27 @@ ngrok http 8501
 
 ## 사용 방법
 
+### Chainlit 버전 (추천)
+
+1. Ollama 서버가 실행 중인지 확인 (`ollama serve`)
+2. Chainlit 앱 실행 (`./run_chainlit.sh`)
+3. 브라우저에서 챗봇 인터페이스 접속
+4. 퓨쳐시스템에 대한 질문 입력
+5. 실시간 스트리밍 응답 확인
+
+**특징:**
+- 챗봇 전용 UI
+- Chain of Thought 시각화
+- 깔끔한 대화 인터페이스
+- 포스터 색상 테마 (네이비 블루 + 시안)
+
+### Streamlit 버전
+
 1. Ollama 서버가 실행 중인지 확인 (`ollama serve`)
 2. Streamlit 앱 실행 (`streamlit run app.py`)
 3. 브라우저에서 챗봇 인터페이스 접속
 4. 사이드바에서 모델 및 설정 조정
-   - LLM 모델 선택 (llama3.2:3b, mistral:7b, gemma:7b)
+   - LLM 모델 선택 (llama3.1:8b, llama3.2:3b, mistral:7b, gemma:7b)
    - Temperature 조정 (0.0 ~ 1.0)
    - Reranking 사용 여부 설정
 5. 퓨쳐시스템에 대한 질문 입력

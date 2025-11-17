@@ -1,0 +1,96 @@
+[project]
+# 프로젝트 정보
+enable_telemetry = false
+user_env = []
+id = "futuresystem-chatbot"
+
+[features]
+# 기능 설정
+prompt_playground = false
+unsafe_allow_html = false
+latex = false
+multi_modal = false
+audio = false
+spontaneous_file_upload = {
+    enabled = false,
+    accept = [],
+    max_files = 1,
+    max_size_mb = 10
+}
+
+[UI]
+# UI 설정
+name = "퓨쳐시스템 인트라넷 챗봇"
+description = "정보보호 전문기업 · RAG 챗봇"
+default_collapse_content = true
+default_expand_messages = false
+hide_cot = false
+cot_kind = "tool"
+
+# 포스터 색상 테마 (네이비 블루 + 시안)
+[UI.theme]
+default = "dark"
+
+[UI.theme.dark]
+background = "#0A1929"
+paper = "#0D2137"
+primary = "#00D9FF"
+text_primary = "#E6E6E6"
+text_secondary = "#8A8F98"
+
+[UI.theme.light]
+background = "#F8F9FA"
+paper = "#FFFFFF"
+primary = "#00D9FF"
+text_primary = "#202124"
+text_secondary = "#5F6368"
+
+# 폰트 설정
+font_family = "Inter, -apple-system, sans-serif"
+
+# 커스텀 CSS
+[UI.theme.dark.css]
+# 포스터 색상 매칭
+body = """
+background: linear-gradient(135deg, #0A1929 0%, #0D2137 100%);
+font-family: 'Inter', -apple-system, sans-serif;
+"""
+
+# 메시지 스타일
+".message-container" = """
+border-radius: 8px;
+margin-bottom: 1rem;
+"""
+
+".user-message" = """
+background: rgba(0, 217, 255, 0.08);
+border: 1px solid rgba(0, 217, 255, 0.2);
+"""
+
+".assistant-message" = """
+background: rgba(255, 255, 255, 0.03);
+border: 1px solid rgba(255, 255, 255, 0.08);
+"""
+
+# 입력창 스타일
+".input-container" = """
+background: rgba(10, 25, 41, 0.95);
+border: 1px solid rgba(0, 217, 255, 0.2);
+border-radius: 8px;
+"""
+
+# 버튼 스타일
+"button" = """
+background: rgba(0, 217, 255, 0.08);
+border: 1px solid rgba(0, 217, 255, 0.2);
+border-radius: 6px;
+color: #E6E6E6;
+"""
+
+"button:hover" = """
+background: rgba(0, 217, 255, 0.15);
+border-color: rgba(0, 217, 255, 0.3);
+"""
+
+[meta]
+generated_by = "0.9.0"
