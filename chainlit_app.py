@@ -22,12 +22,6 @@ logger = logging.getLogger(__name__)
 @cl.on_chat_start
 async def start():
     """채팅 시작 시 호출"""
-    # 환영 메시지
-    await cl.Message(
-        content="안녕하세요! 퓨쳐시스템 인트라넷 챗봇입니다.\n\n회사 정보, 솔루션, 개발자 정보 등에 대해 질문해주세요.",
-        author="Assistant"
-    ).send()
-
     # RAG 파이프라인 초기화
     try:
         with cl.Step(name="RAG 시스템 초기화", type="tool") as step:
