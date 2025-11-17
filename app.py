@@ -189,8 +189,6 @@ st.markdown("""
 
     .stSlider [data-testid="stThumbValue"] {
         color: #e6e6e6 !important;
-        background: rgba(99, 102, 241, 0.2) !important;
-        border: 1px solid rgba(99, 102, 241, 0.3) !important;
     }
 
     /* 체크박스 */
