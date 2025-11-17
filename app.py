@@ -98,6 +98,11 @@ st.markdown("""
         line-height: 1.6;
     }
 
+    /* 입력창 컨테이너 배경 */
+    [data-testid="stBottomBlockContainer"] {
+        background: transparent;
+    }
+
     /* 입력창 - 포스터 색상 매칭 */
     .stChatInput {
         background: rgba(10, 25, 41, 0.95);
