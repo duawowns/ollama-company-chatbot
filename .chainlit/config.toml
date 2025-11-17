@@ -1,96 +1,153 @@
 [project]
-# 프로젝트 정보
-enable_telemetry = false
+# List of environment variables to be provided by each user to use the app.
 user_env = []
-id = "futuresystem-chatbot"
+
+# Duration (in seconds) during which the session is saved when the connection is lost
+session_timeout = 3600
+
+# Duration (in seconds) of the user session expiry
+user_session_timeout = 1296000  # 15 days
+
+# Enable third parties caching (e.g., LangChain cache)
+cache = false
+
+# Whether to persist user environment variables (API keys) to the database
+# Set to true to store user env vars in DB, false to exclude them for security
+persist_user_env = false
+
+# Whether to mask user environment variables (API keys) in the UI with password type
+# Set to true to show API keys as ***, false to show them as plain text
+mask_user_env = false
+
+# Authorized origins
+allow_origins = ["*"]
 
 [features]
-# 기능 설정
-prompt_playground = false
+# Process and display HTML in messages. This can be a security risk (see https://stackoverflow.com/questions/19603097/why-is-it-dangerous-to-render-user-generated-html-or-javascript)
 unsafe_allow_html = false
+
+# Process and display mathematical expressions. This can clash with "$" characters in messages.
 latex = false
-multi_modal = false
-audio = false
-spontaneous_file_upload = {
-    enabled = false,
-    accept = [],
-    max_files = 1,
-    max_size_mb = 10
-}
+
+# Autoscroll new user messages at the top of the window
+user_message_autoscroll = true
+
+# Automatically tag threads with the current chat profile (if a chat profile is used)
+auto_tag_thread = true
+
+# Allow users to edit their own messages
+edit_message = true
+
+# Allow users to share threads (backend + UI). Requires an app-defined on_shared_thread_view callback.
+allow_thread_sharing = false
+
+[features.slack]
+# Add emoji reaction when message is received (requires reactions:write OAuth scope)
+reaction_on_message_received = false
+
+# Authorize users to spontaneously upload files with messages
+[features.spontaneous_file_upload]
+    enabled = true
+    # Define accepted file types using MIME types
+    # Examples:
+    # 1. For specific file types:
+    #    accept = ["image/jpeg", "image/png", "application/pdf"]
+    # 2. For all files of certain type:
+    #    accept = ["image/*", "audio/*", "video/*"]
+    # 3. For specific file extensions:
+    #    accept = { "application/octet-stream" = [".xyz", ".pdb"] }
+    # Note: Using "*/*" is not recommended as it may cause browser warnings
+    accept = ["*/*"]
+    max_files = 20
+    max_size_mb = 500
+
+[features.audio]
+    # Enable audio features
+    enabled = false
+    # Sample rate of the audio
+    sample_rate = 24000
+
+[features.mcp]
+    # Enable Model Context Protocol (MCP) features
+    enabled = false
+
+[features.mcp.sse]
+    enabled = true
+
+[features.mcp.streamable-http]
+    enabled = true
+
+[features.mcp.stdio]
+    enabled = true
+    # Only the executables in the allow list can be used for MCP stdio server.
+    # Only need the base name of the executable, e.g. "npx", not "/usr/bin/npx".
+    # Please don't comment this line for now, we need it to parse the executable name.
+    allowed_executables = [ "npx", "uvx" ]
 
 [UI]
-# UI 설정
+# Name of the assistant.
 name = "퓨쳐시스템 인트라넷 챗봇"
-description = "정보보호 전문기업 · RAG 챗봇"
-default_collapse_content = true
-default_expand_messages = false
-hide_cot = false
-cot_kind = "tool"
 
-# 포스터 색상 테마 (네이비 블루 + 시안)
-[UI.theme]
-default = "dark"
+default_theme = "dark"
 
-[UI.theme.dark]
-background = "#0A1929"
-paper = "#0D2137"
-primary = "#00D9FF"
-text_primary = "#E6E6E6"
-text_secondary = "#8A8F98"
+# layout = "wide"
 
-[UI.theme.light]
-background = "#F8F9FA"
-paper = "#FFFFFF"
-primary = "#00D9FF"
-text_primary = "#202124"
-text_secondary = "#5F6368"
+# default_sidebar_state = "open"
 
-# 폰트 설정
-font_family = "Inter, -apple-system, sans-serif"
+# Description of the assistant. This is used for HTML tags.
+# description = ""
 
-# 커스텀 CSS
-[UI.theme.dark.css]
-# 포스터 색상 매칭
-body = """
-background: linear-gradient(135deg, #0A1929 0%, #0D2137 100%);
-font-family: 'Inter', -apple-system, sans-serif;
-"""
+# Chain of Thought (CoT) display mode. Can be "hidden", "tool_call" or "full".
+cot = "full"
 
-# 메시지 스타일
-".message-container" = """
-border-radius: 8px;
-margin-bottom: 1rem;
-"""
+# Specify a CSS file that can be used to customize the user interface.
+# The CSS file can be served from the public directory or via an external link.
+# custom_css = "/public/test.css"
 
-".user-message" = """
-background: rgba(0, 217, 255, 0.08);
-border: 1px solid rgba(0, 217, 255, 0.2);
-"""
+# Specify additional attributes for a custom CSS file
+# custom_css_attributes = "media=\"print\""
 
-".assistant-message" = """
-background: rgba(255, 255, 255, 0.03);
-border: 1px solid rgba(255, 255, 255, 0.08);
-"""
+# Specify a JavaScript file that can be used to customize the user interface.
+# The JavaScript file can be served from the public directory.
+# custom_js = "/public/test.js"
 
-# 입력창 스타일
-".input-container" = """
-background: rgba(10, 25, 41, 0.95);
-border: 1px solid rgba(0, 217, 255, 0.2);
-border-radius: 8px;
-"""
+# The style of alert boxes. Can be "classic" or "modern".
+alert_style = "classic"
 
-# 버튼 스타일
-"button" = """
-background: rgba(0, 217, 255, 0.08);
-border: 1px solid rgba(0, 217, 255, 0.2);
-border-radius: 6px;
-color: #E6E6E6;
-"""
+# Specify additional attributes for custom JS file
+# custom_js_attributes = "async type = \"module\""
 
-"button:hover" = """
-background: rgba(0, 217, 255, 0.15);
-border-color: rgba(0, 217, 255, 0.3);
-"""
+# Custom login page image, relative to public directory or external URL
+# login_page_image = "/public/custom-background.jpg"
+
+# Custom login page image filter (Tailwind internal filters, no dark/light variants)
+# login_page_image_filter = "brightness-50 grayscale"
+# login_page_image_dark_filter = "contrast-200 blur-sm"
+
+# Specify a custom meta URL (used for meta tags like og:url)
+# custom_meta_url = "https://github.com/Chainlit/chainlit"
+
+# Specify a custom meta image url.
+# custom_meta_image_url = "https://chainlit-cloud.s3.eu-west-3.amazonaws.com/logo/chainlit_banner.png"
+
+# Load assistant logo directly from URL.
+logo_file_url = ""
+
+# Load assistant avatar image directly from URL.
+default_avatar_file_url = ""
+
+# Specify a custom build directory for the frontend.
+# This can be used to customize the frontend code.
+# Be careful: If this is a relative path, it should not start with a slash.
+# custom_build = "./public/build"
+
+# Specify optional one or more custom links in the header.
+# [[UI.header_links]]
+#     name = "Issues"
+#     display_name = "Report Issue"
+#     icon_url = "https://avatars.githubusercontent.com/u/128686189?s=200&v=4"
+#     url = "https://github.com/Chainlit/chainlit/issues"
+#     target = "_blank" (default)  # Optional: "_self", "_parent", "_top".
 
 [meta]
-generated_by = "0.9.0"
+generated_by = "2.9.0"
