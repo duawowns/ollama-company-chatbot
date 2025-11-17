@@ -227,21 +227,10 @@ def main():
 
         st.markdown("---")
 
-        # 시스템 상태
-        st.info("**시스템 상태**\n"
-                "✓ 데이터: 83개 Q&A\n"
-                "✓ 검색: 활성화\n"
-                "✓ 응답: 실시간 스트리밍")
-
         # 대화 초기화 버튼
         if st.button("대화 초기화", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
-
-        # 통계
-        if "messages" in st.session_state and st.session_state.messages:
-            st.markdown("---")
-            st.metric("대화", f"{len(st.session_state.messages) // 2}회")
 
     # 세션 상태 초기화
     if "messages" not in st.session_state:
