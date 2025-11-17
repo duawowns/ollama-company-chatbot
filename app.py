@@ -196,7 +196,7 @@ def main():
     """메인 애플리케이션"""
 
     # 제목
-    st.title("퓨쳐시스템")
+    st.title("퓨쳐시스템 인트라넷 챗봇")
     st.markdown('<p class="subtitle">정보보호 전문기업 · AI 어시스턴트</p>', unsafe_allow_html=True)
 
     # 사이드바
@@ -213,7 +213,7 @@ def main():
 
         # 온도 설정
         temperature = st.slider(
-            "응답 창의성",
+            "Temperature",
             0.0, 1.0, 0.7, 0.1,
             help="낮을수록 정확하고 일관적, 높을수록 창의적"
         )
