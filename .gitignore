@@ -17,7 +17,6 @@ models/
 data/raw/*.csv
 data/raw/*.json
 *.db
-*.sqlite
 
 # Environment variables
 .env
