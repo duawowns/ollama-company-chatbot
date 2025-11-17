@@ -311,7 +311,6 @@ def main():
             st.rerun()
 
         # 푸터
-        st.markdown("---")
         st.markdown(
             '<div class="footer">'
             '© 2025 퓨쳐시스템 | 동서울대학교 캡스톤디자인 프로젝트'
