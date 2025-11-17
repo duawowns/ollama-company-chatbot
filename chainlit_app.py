@@ -22,43 +22,40 @@ logger = logging.getLogger(__name__)
 @cl.on_chat_start
 async def start():
     """채팅 시작 시 호출"""
-    # RAG 파이프라인 초기화
+    # RAG 파이프라인 초기화 (백그라운드)
     try:
-        with cl.Step(name="RAG 시스템 초기화", type="tool") as step:
-            # 기본 설정
-            model_name = "llama3.1:8b"
-            temperature = 0.7
-            use_reranking = True
+        # 기본 설정
+        model_name = "llama3.1:8b"
+        temperature = 0.7
+        use_reranking = True
 
-            # RAG 파이프라인 생성
-            pipeline = RAGPipeline(
-                model_name=model_name,
-                temperature=temperature,
-                use_reranking=use_reranking
-            )
+        # RAG 파이프라인 생성
+        pipeline = RAGPipeline(
+            model_name=model_name,
+            temperature=temperature,
+            use_reranking=use_reranking
+        )
 
-            # 벡터 스토어 로드
-            vectorstore_path = project_root / "data" / "vectorstore"
+        # 벡터 스토어 로드
+        vectorstore_path = project_root / "data" / "vectorstore"
 
-            if not vectorstore_path.exists():
-                await cl.Message(
-                    content="❌ 데이터베이스를 찾을 수 없습니다. 관리자에게 문의하세요.",
-                    author="System"
-                ).send()
-                return
+        if not vectorstore_path.exists():
+            await cl.Message(
+                content="❌ 데이터베이스를 찾을 수 없습니다. 관리자에게 문의하세요.",
+                author="System"
+            ).send()
+            return
 
-            pipeline.load_vectorstore(str(vectorstore_path))
+        pipeline.load_vectorstore(str(vectorstore_path))
 
-            # QA 체인 생성
-            pipeline.create_qa_chain()
+        # QA 체인 생성
+        pipeline.create_qa_chain()
 
-            # 세션에 저장
-            cl.user_session.set("rag_pipeline", pipeline)
-            cl.user_session.set("model_name", model_name)
-            cl.user_session.set("temperature", temperature)
-            cl.user_session.set("use_reranking", use_reranking)
-
-            step.output = f"✅ 모델: {model_name} | Temperature: {temperature} | 고급 검색: {'ON' if use_reranking else 'OFF'}"
+        # 세션에 저장
+        cl.user_session.set("rag_pipeline", pipeline)
+        cl.user_session.set("model_name", model_name)
+        cl.user_session.set("temperature", temperature)
+        cl.user_session.set("use_reranking", use_reranking)
 
         logger.info("RAG 파이프라인 초기화 완료")
 
