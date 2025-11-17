@@ -44,7 +44,7 @@ st.markdown("""
     .main .block-container {
         padding-top: 2.5rem;
         padding-bottom: 3rem;
-        max-width: 800px;
+        max-width: 1200px;
         margin: 0 auto;
     }
 
@@ -82,14 +82,14 @@ st.markdown("""
     .stChatMessage[data-testid*="user"] {
         background: rgba(99, 102, 241, 0.1);
         border: 1px solid rgba(99, 102, 241, 0.2);
-        margin-left: 2rem;
+        margin-left: 15%;
     }
 
     /* AI 메시지 */
     .stChatMessage[data-testid*="assistant"] {
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        margin-right: 2rem;
+        margin-right: 15%;
     }
 
     [data-testid="stChatMessageContent"] {
