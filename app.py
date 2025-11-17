@@ -174,10 +174,6 @@ st.markdown("""
         padding-top: 1rem;
     }
 
-    .stSlider > div > div > div {
-        background: rgba(99, 102, 241, 0.3);
-    }
-
     .stSlider > div > div > div > div {
         background: #6366f1;
     }
