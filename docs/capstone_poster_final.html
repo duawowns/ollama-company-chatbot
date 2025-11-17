@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캡스톤디자인 전시 판넬 - Ollama ChatBot [최종본]</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: A1 portrait;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0A1929;
+            color: #FFFFFF;
+            width: 594mm;
+            height: 841mm;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 고급 배경 그라디언트 */
+        .gradient-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(0, 217, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(30, 136, 229, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 70%),
+                linear-gradient(135deg, #0A1929 0%, #1A2F45 50%, #0D2137 100%);
+        }
+
+        /* 정교한 네트워크 그리드 */
+        .network-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.08;
+            background-image:
+                linear-gradient(rgba(0, 217, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.3) 1px, transparent 1px);
+            background-size: 40mm 40mm;
+            z-index: 1;
+        }
+
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, #00D9FF, transparent);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+            25% { transform: translate(20mm, -30mm); opacity: 0.7; }
+            50% { transform: translate(-15mm, -50mm); opacity: 0.5; }
+            75% { transform: translate(30mm, -25mm); opacity: 0.8; }
+        }
+
+        /* 메인 컨테이너 */
+        .container {
+            position: relative;
+            z-index: 10;
+            padding: 35mm 40mm;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 헤더 섹션 */
+        header {
+            position: relative;
+            text-align: center;
+            padding: 25mm 0 30mm 0;
+            margin-bottom: 25mm;
+        }
+
+        .header-ornament {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150mm;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #00D9FF, transparent);
+            box-shadow: 0 0 20px #00D9FF;
+        }
+
+        h1 {
+            font-size: 78pt;
+            font-weight: 900;
+            letter-spacing: -3px;
+            margin: 15mm 0;
+            position: relative;
+            background: linear-gradient(135deg, #00E5FF 0%, #1E88E5 50%, #00D9FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 40px rgba(0, 229, 255, 0.6));
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 34pt;
+            color: #B0BEC5;
+            font-weight: 300;
+            letter-spacing: 3px;
+            margin-bottom: 12mm;
+            text-transform: uppercase;
+        }
+
+        .institution {
+            font-size: 22pt;
+            color: #00D9FF;
+            font-weight: 600;
+            letter-spacing: 1px;
+            padding: 5mm 20mm;
+            background: rgba(0, 217, 255, 0.1);
+            border-radius: 50px;
+            display: inline-block;
+            border: 2px solid rgba(0, 217, 255, 0.3);
+        }
+
+        /* 메인 그리드 */
+        .main-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 180mm 1fr 180mm;
+            gap: 25mm;
+            margin-bottom: 20mm;
+        }
+
+        /* 패널 스타일 */
+        .panel {
+            position: relative;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(0, 217, 255, 0.2);
+            border-radius: 12mm;
+            padding: 18mm;
+            box-shadow:
+                0 10mm 40mm rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.3), rgba(30, 136, 229, 0.3));
+            border-radius: 12mm;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .section-title {
+            font-size: 32pt;
+            font-weight: 700;
+            color: #00E5FF;
+            margin-bottom: 12mm;
+            padding-bottom: 6mm;
+            border-bottom: 3px solid rgba(0, 229, 255, 0.5);
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 8mm;
+            height: 8mm;
+            background: linear-gradient(135deg, #00E5FF, #1E88E5);
+            border-radius: 2mm;
+            margin-right: 5mm;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.8);
+        }
+
+        .info-group {
+            margin-bottom: 12mm;
+        }
+
+        .info-item {
+            font-size: 19pt;
+            line-height: 1.6;
+            margin-bottom: 6mm;
+            padding: 5mm 8mm;
+            background: rgba(0, 217, 255, 0.05);
+            border-left: 4px solid #1E88E5;
+            border-radius: 0 4mm 4mm 0;
+            transition: all 0.3s;
+        }
+
+        .info-item strong {
+            display: block;
+            color: #00E5FF;
+            font-size: 16pt;
+            margin-bottom: 2mm;
+            font-weight: 600;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 5mm;
+        }
+
+        .tech-item {
+            font-size: 19pt;
+            padding: 5mm;
+            background: linear-gradient(90deg, rgba(0, 217, 255, 0.1), transparent);
+            border-radius: 4mm;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-item::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, #00E5FF, #1E88E5);
+            border-radius: 50%;
+            margin-right: 5mm;
+            box-shadow: 0 0 15px #00E5FF;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        /* 중앙 아키텍처 패널 */
+        .center-panel {
+            position: relative;
+        }
+
+        .arch-title {
+            font-size: 42pt;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF6B35, #FF8A65);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 15mm;
+            filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.5));
+        }
+
+        .architecture-canvas {
+            position: relative;
+            height: 480mm;
+            background:
+                radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)),
+                linear-gradient(135deg, rgba(30, 136, 229, 0.05), rgba(255, 107, 53, 0.05));
+            border-radius: 10mm;
+            border: 3px solid rgba(255, 107, 53, 0.3);
+            box-shadow:
+                inset 0 0 50mm rgba(0, 0, 0, 0.5),
+                0 5mm 30mm rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+        }
+
+        /* 노드 스타일 */
+        .node {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .node.layer-1 {
+            width: 90mm;
+            height: 90mm;
+            background:
+                radial-gradient(circle at 30% 30%, #42A5F5, #1E88E5),
+                linear-gradient(135deg, #1E88E5, #0D47A1);
+            border: 5px solid #00E5FF;
+            color: white;
+            font-size: 20pt;
+            box-shadow:
+                0 0 40px rgba(0, 229, 255, 0.8),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .node.layer-2 {
+            width: 75mm;
+            height: 75mm;
+            background:
+                radial-gradient(circle at 30% 30%, #FF8A65, #FF6B35),
+                linear-gradient(135deg, #FF6B35, #D84315);
+            border: 4px solid #FFAB91;
+            color: white;
+            font-size: 18pt;
+            box-shadow:
+                0 0 35px rgba(255, 107, 53, 0.7),
+                inset 0 0 25px rgba(255, 255, 255, 0.1);
+        }
+
+        .node.layer-3 {
+            width: 65mm;
+            height: 65mm;
+            background:
+                radial-gradient(circle at 30% 30%, #4DD0E1, #00D9FF),
+                linear-gradient(135deg, #00D9FF, #00ACC1);
+            border: 4px solid #00E5FF;
+            color: #0A1929;
+            font-size: 16pt;
+            box-shadow:
+                0 0 30px rgba(0, 217, 255, 0.7),
+                inset 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .node.layer-4 {
+            width: 70mm;
+            height: 70mm;
+            background:
+                radial-gradient(circle at 30% 30%, #81C784, #66BB6A),
+                linear-gradient(135deg, #66BB6A, #43A047);
+            border: 4px solid #A5D6A7;
+            color: white;
+            font-size: 17pt;
+            box-shadow:
+                0 0 30px rgba(102, 187, 106, 0.6),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        /* SVG 연결선 */
+        .connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .connection-line {
+            stroke-width: 4;
+            stroke-linecap: round;
+            fill: none;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        /* 푸터 */
+        footer {
+            text-align: center;
+            padding: 15mm 0;
+            border-top: 3px solid rgba(0, 217, 255, 0.5);
+            position: relative;
+        }
+
+        .footer-ornament {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200mm;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #FF6B35, transparent);
+            box-shadow: 0 0 20px #FF6B35;
+            margin-bottom: 10mm;
+        }
+
+        .footer-title {
+            font-size: 36pt;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00E5FF, #FF6B35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10mm;
+        }
+
+        .effects-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10mm;
+            max-width: 450mm;
+            margin: 0 auto 10mm auto;
+        }
+
+        .effect-card {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(30, 136, 229, 0.1));
+            border: 2px solid rgba(0, 217, 255, 0.3);
+            border-radius: 6mm;
+            padding: 8mm;
+            font-size: 18pt;
+            text-align: center;
+        }
+
+        .effect-icon {
+            width: 20mm;
+            height: 20mm;
+            margin: 0 auto 4mm auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28pt;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00E5FF, #1E88E5);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+            color: #0A1929;
+        }
+
+        .copyright {
+            font-size: 16pt;
+            color: #78909C;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 2px;
+        }
+
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 배경 레이어 -->
+    <div class="gradient-bg"></div>
+    <div class="network-grid"></div>
+    <div class="floating-particles">
+        <div class="particle" style="top: 20%; left: 15%; animation-delay: 0s;"></div>
+        <div class="particle" style="top: 40%; left: 80%; animation-delay: 5s;"></div>
+        <div class="particle" style="top: 60%; left: 25%; animation-delay: 10s;"></div>
+        <div class="particle" style="top: 75%; left: 70%; animation-delay: 15s;"></div>
+        <div class="particle" style="top: 30%; left: 50%; animation-delay: 7s;"></div>
+        <div class="particle" style="top: 85%; left: 40%; animation-delay: 12s;"></div>
+    </div>
+
+    <div class="container">
+        <!-- 헤더 -->
+        <header>
+            <div class="header-ornament"></div>
+            <h1>Ollama ChatBot<br>회사 소개 시스템</h1>
+            <div class="subtitle">RAG-Based Intelligent Response Platform</div>
+            <div class="institution">동서울대학교 AI융합소프트웨어학과 | ㈜퓨쳐시스템</div>
+        </header>
+
+        <!-- 메인 그리드 -->
+        <div class="main-grid">
+            <!-- 좌측 패널 -->
+            <div class="panel">
+                <div class="section-title">프로젝트 정보</div>
+                <div class="info-group">
+                    <div class="info-item">
+                        <strong>프로젝트 기간</strong>
+                        2025.08.30 - 2025.11.28<br>
+                        (총 120시간)
+                    </div>
+                    <div class="info-item">
+                        <strong>개발 팀원</strong>
+                        염재준
+                    </div>
+                    <div class="info-item">
+                        <strong>지도 교수</strong>
+                        조민양 교수
+                    </div>
+                    <div class="info-item">
+                        <strong>현장 교사</strong>
+                        김인태 선임
+                    </div>
+                </div>
+
+                <div class="section-title" style="margin-top: 15mm;">핵심 기술</div>
+                <div class="tech-grid">
+                    <div class="tech-item">Streamlit UI Framework</div>
+                    <div class="tech-item">Ollama LLM Engine</div>
+                    <div class="tech-item">LangChain RAG</div>
+                    <div class="tech-item">FAISS Vector Database</div>
+                    <div class="tech-item">Sentence Transformers</div>
+                    <div class="tech-item">Korean NLP Models</div>
+                </div>
+            </div>
+
+            <!-- 중앙 패널 -->
+            <div class="center-panel">
+                <div class="arch-title">시스템 아키텍처</div>
+                <div class="architecture-canvas">
+                    <!-- Layer 1: UI -->
+                    <div class="node layer-1" style="top: 25mm; left: 50%; transform: translateX(-50%);">
+                        Streamlit<br>User Interface
+                    </div>
+
+                    <!-- Layer 2: Core Processing -->
+                    <div class="node layer-2" style="top: 145mm; left: 20%; transform: translateX(-50%);">
+                        RAG<br>Pipeline
+                    </div>
+                    <div class="node layer-2" style="top: 145mm; left: 80%; transform: translateX(-50%);">
+                        Ollama<br>LLM
+                    </div>
+
+                    <!-- Layer 3: Data Layer -->
+                    <div class="node layer-3" style="top: 275mm; left: 20%; transform: translateX(-50%);">
+                        Vector<br>Store
+                    </div>
+                    <div class="node layer-3" style="top: 275mm; left: 80%; transform: translateX(-50%);">
+                        Embedding<br>Model
+                    </div>
+
+                    <!-- Layer 4: Data Source -->
+                    <div class="node layer-4" style="top: 390mm; left: 50%; transform: translateX(-50%);">
+                        Data Sources<br>(CSV / PDF)
+                    </div>
+
+                    <!-- SVG 연결선 -->
+                    <svg class="connections" width="100%" height="100%">
+                        <defs>
+                            <linearGradient id="grad-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00E5FF;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#1E88E5;stop-opacity:0.8" />
+                            </linearGradient>
+                            <linearGradient id="grad-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#FF8A65;stop-opacity:0.8" />
+                            </linearGradient>
+                            <linearGradient id="grad-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00D9FF;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#4DD0E1;stop-opacity:0.8" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- UI to Processing Layer -->
+                        <path d="M 50% 70mm Q 30% 110mm, 20% 180mm" class="connection-line" stroke="url(#grad-blue)" />
+                        <path d="M 50% 70mm Q 70% 110mm, 80% 180mm" class="connection-line" stroke="url(#grad-blue)" />
+
+                        <!-- Processing Layer interconnect -->
+                        <path d="M 23% 190mm L 77% 190mm" class="connection-line" stroke="url(#grad-orange)" />
+
+                        <!-- Processing to Data Layer -->
+                        <path d="M 20% 220mm L 20% 310mm" class="connection-line" stroke="url(#grad-cyan)" />
+                        <path d="M 80% 220mm L 80% 310mm" class="connection-line" stroke="url(#grad-cyan)" />
+
+                        <!-- Data Layer to Source -->
+                        <path d="M 20% 340mm Q 30% 370mm, 50% 425mm" class="connection-line" stroke="url(#grad-blue)" />
+                        <path d="M 80% 340mm Q 70% 370mm, 50% 425mm" class="connection-line" stroke="url(#grad-blue)" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 우측 패널 -->
+            <div class="panel">
+                <div class="section-title">주요 기능</div>
+                <div class="tech-grid">
+                    <div class="tech-item">지능형 질의응답</div>
+                    <div class="tech-item">컨텍스트 기반 답변</div>
+                    <div class="tech-item">실시간 스트리밍</div>
+                    <div class="tech-item">시맨틱 검색</div>
+                    <div class="tech-item">대화 이력 관리</div>
+                    <div class="tech-item">다중 LLM 지원</div>
+                    <div class="tech-item">한국어 최적화</div>
+                    <div class="tech-item">문서 임베딩</div>
+                    <div class="tech-item">벡터 인덱싱</div>
+                    <div class="tech-item">자동 응답 생성</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <footer>
+            <div class="footer-ornament"></div>
+            <div class="footer-title">프로젝트 기대 효과</div>
+            <div class="effects-grid">
+                <div class="effect-card">
+                    <div class="effect-icon">01</div>
+                    24/7 자동 응답<br>고객 만족도 향상
+                </div>
+                <div class="effect-card">
+                    <div class="effect-icon">02</div>
+                    정확한 정보 제공<br>업무 효율성 증대
+                </div>
+                <div class="effect-card">
+                    <div class="effect-icon">03</div>
+                    오픈소스 기반<br>비용 절감 및 확장성
+                </div>
+            </div>
+            <div class="copyright">CAPSTONE DESIGN PROJECT © 2025</div>
+        </footer>
+    </div>
+</body>
+</html>
