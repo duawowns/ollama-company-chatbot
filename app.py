@@ -100,10 +100,11 @@ st.markdown("""
 
     /* 입력창 - 포스터 색상 매칭 */
     .stChatInput {
-        background: rgba(10, 25, 41, 0.4);
-        border: 1px solid rgba(0, 217, 255, 0.15);
+        background: rgba(10, 25, 41, 0.95);
+        border: 1px solid rgba(0, 217, 255, 0.2);
         border-radius: 8px;
         backdrop-filter: blur(10px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
     .stChatInput textarea {
