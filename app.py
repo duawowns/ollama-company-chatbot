@@ -33,9 +33,9 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-    /* 전체 배경 - Linear 다크 테마 */
+    /* 전체 배경 - 포스터 색상 매칭 */
     .stApp {
-        background: linear-gradient(180deg, #0a0b0d 0%, #12141a 100%);
+        background: linear-gradient(135deg, #0A1929 0%, #0D2137 100%);
         font-family: 'Inter', -apple-system, sans-serif;
         color: #e6e6e6;
     }
@@ -80,8 +80,8 @@ st.markdown("""
 
     /* 사용자 메시지 */
     .stChatMessage[data-testid*="user"] {
-        background: rgba(99, 102, 241, 0.1);
-        border: 1px solid rgba(99, 102, 241, 0.2);
+        background: rgba(0, 217, 255, 0.08);
+        border: 1px solid rgba(0, 217, 255, 0.2);
         margin-left: 15%;
     }
 
@@ -98,10 +98,10 @@ st.markdown("""
         line-height: 1.6;
     }
 
-    /* 입력창 - Linear 스타일 */
+    /* 입력창 - 포스터 색상 매칭 */
     .stChatInput {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(10, 25, 41, 0.4);
+        border: 1px solid rgba(0, 217, 255, 0.15);
         border-radius: 8px;
         backdrop-filter: blur(10px);
     }
@@ -117,10 +117,10 @@ st.markdown("""
         color: #6b7280;
     }
 
-    /* 사이드바 - Linear 다크 스타일 */
+    /* 사이드바 - 포스터 색상 매칭 */
     [data-testid="stSidebar"] {
-        background: rgba(0, 0, 0, 0.3);
-        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(10, 25, 41, 0.8);
+        border-right: 1px solid rgba(0, 217, 255, 0.15);
         padding-top: 1.5rem;
         backdrop-filter: blur(10px);
     }
@@ -135,10 +135,10 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* 버튼 - Linear 미니멀 스타일 */
+    /* 버튼 - 포스터 색상 매칭 */
     .stButton button {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(0, 217, 255, 0.08);
+        border: 1px solid rgba(0, 217, 255, 0.2);
         border-radius: 6px;
         color: #e6e6e6;
         font-weight: 500;
@@ -148,8 +148,8 @@ st.markdown("""
     }
 
     .stButton button:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.15);
+        background: rgba(0, 217, 255, 0.15);
+        border-color: rgba(0, 217, 255, 0.3);
     }
 
     /* 셀렉트박스 */
@@ -158,14 +158,14 @@ st.markdown("""
     }
 
     .stSelectbox > div > div {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(10, 25, 41, 0.6);
+        border: 1px solid rgba(0, 217, 255, 0.2);
         border-radius: 6px;
         color: #e6e6e6;
     }
 
     .stSelectbox option {
-        background: #1a1d24;
+        background: #0A1929;
         color: #e6e6e6;
     }
 
@@ -210,11 +210,11 @@ st.markdown("""
     /* 푸터 - 사이드바용 */
     .footer {
         text-align: center;
-        color: #6b7280;
+        color: #8a8f98;
         font-size: 0.7rem;
         padding: 1rem 0.5rem;
         margin-top: 2rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(0, 217, 255, 0.15);
     }
 
     /* 에러/경고 메시지 */
