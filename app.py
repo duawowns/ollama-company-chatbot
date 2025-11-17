@@ -24,134 +24,152 @@ logger = logging.getLogger(__name__)
 st.set_page_config(
     page_title="퓨쳐시스템",
     page_icon="🔒",
-    layout="wide",
+    layout="centered",
     initial_sidebar_state="expanded"
 )
 
-# Google AI Studio 스타일 커스텀 CSS
+# Linear.app 스타일 커스텀 CSS
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-    /* 전체 배경 - 밝은 테마 */
+    /* 전체 배경 - Linear 다크 테마 */
     .stApp {
-        background: #f8f9fa;
-        font-family: 'Google Sans', 'Segoe UI', sans-serif;
+        background: linear-gradient(180deg, #0a0b0d 0%, #12141a 100%);
+        font-family: 'Inter', -apple-system, sans-serif;
+        color: #e6e6e6;
     }
 
     /* 메인 컨테이너 */
     .main .block-container {
-        padding-top: 3rem;
-        padding-bottom: 2rem;
+        padding-top: 2.5rem;
+        padding-bottom: 3rem;
         max-width: 800px;
+        margin: 0 auto;
     }
 
-    /* 제목 스타일 */
+    /* 제목 스타일 - Linear 스타일 */
     h1 {
-        color: #202124;
-        font-weight: 500;
-        letter-spacing: -0.5px;
-        font-size: 2.25rem !important;
-        margin-bottom: 0.5rem;
-        font-family: 'Google Sans', sans-serif;
+        color: #ffffff;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        font-size: 1.75rem !important;
+        margin-bottom: 0.5rem !important;
+        margin-top: 0 !important;
+        font-family: 'Inter', sans-serif;
     }
 
     /* 부제목 */
     .subtitle {
-        color: #5f6368;
-        font-size: 1rem;
+        color: #8a8f98;
+        font-size: 0.875rem;
         margin-bottom: 2.5rem;
+        margin-top: 0.25rem;
         font-weight: 400;
+        letter-spacing: -0.01em;
     }
 
-    /* 채팅 메시지 - Google 스타일 */
+    /* 채팅 메시지 - Linear 미니멀 스타일 */
     .stChatMessage {
         background: transparent;
         border: none;
-        border-radius: 24px;
-        padding: 1.25rem 1.5rem;
-        margin-bottom: 1rem;
+        border-radius: 8px;
+        padding: 0.875rem 1rem;
+        margin-bottom: 0.5rem;
     }
 
     /* 사용자 메시지 */
     .stChatMessage[data-testid*="user"] {
-        background: #e8f0fe;
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.2);
         margin-left: 2rem;
     }
 
     /* AI 메시지 */
     .stChatMessage[data-testid*="assistant"] {
-        background: #fff;
-        border: 1px solid #e8eaed;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         margin-right: 2rem;
     }
 
     [data-testid="stChatMessageContent"] {
-        color: #202124;
-        font-size: 0.95rem;
+        color: #e6e6e6;
+        font-size: 0.9375rem;
         line-height: 1.6;
     }
 
-    /* 입력창 - 하단 고정 스타일 */
+    /* 입력창 - Linear 스타일 */
     .stChatInput {
         position: sticky;
         bottom: 0;
-        background: #fff;
-        border: 1px solid #dadce0;
-        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
         padding: 0.5rem;
-        box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+        backdrop-filter: blur(10px);
     }
 
     .stChatInput textarea {
         border: none !important;
-        font-size: 0.95rem;
-        color: #202124;
+        font-size: 0.9375rem;
+        color: #e6e6e6;
+        background: transparent !important;
     }
 
-    /* 사이드바 - Google 스타일 */
+    .stChatInput textarea::placeholder {
+        color: #6b7280;
+    }
+
+    /* 사이드바 - Linear 다크 스타일 */
     [data-testid="stSidebar"] {
-        background: #fff;
-        border-right: 1px solid #e8eaed;
-        padding-top: 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 1.5rem;
+        backdrop-filter: blur(10px);
     }
 
     [data-testid="stSidebar"] h2 {
-        color: #202124;
-        font-size: 1rem;
-        font-weight: 500;
+        color: #ffffff;
+        font-size: 0.875rem;
+        font-weight: 600;
         padding-left: 1rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
     }
 
-    /* 버튼 - Google Material Design */
+    /* 버튼 - Linear 미니멀 스타일 */
     .stButton button {
-        background: #fff;
-        border: 1px solid #dadce0;
-        border-radius: 20px;
-        color: #1a73e8;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        color: #e6e6e6;
         font-weight: 500;
-        padding: 0.5rem 1.5rem;
-        transition: all 0.2s;
+        padding: 0.5rem 1rem;
+        transition: all 0.15s ease;
         box-shadow: none;
     }
 
     .stButton button:hover {
-        background: #f8f9fa;
-        border-color: #dadce0;
-        box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
     }
 
     /* 셀렉트박스 */
     .stSelectbox {
-        background: #fff;
+        color: #e6e6e6;
     }
 
     .stSelectbox > div > div {
-        background: #fff;
-        border: 1px solid #dadce0;
-        border-radius: 8px;
-        color: #202124;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        color: #e6e6e6;
+    }
+
+    .stSelectbox option {
+        background: #1a1d24;
+        color: #e6e6e6;
     }
 
     /* 슬라이더 */
@@ -160,47 +178,58 @@ st.markdown("""
     }
 
     .stSlider > div > div > div {
-        color: #1a73e8;
+        background: rgba(99, 102, 241, 0.3);
+    }
+
+    .stSlider > div > div > div > div {
+        background: #6366f1;
     }
 
     /* 체크박스 */
     .stCheckbox {
-        color: #202124;
+        color: #e6e6e6;
     }
 
     .stCheckbox > label {
-        font-size: 0.9rem;
+        font-size: 0.875rem;
+        color: #e6e6e6 !important;
     }
 
     /* 구분선 */
     hr {
-        border-color: #e8eaed;
+        border-color: rgba(255, 255, 255, 0.08);
         margin: 1.5rem 0;
     }
 
     /* 라벨 텍스트 */
     label {
-        color: #5f6368 !important;
-        font-size: 0.85rem !important;
+        color: #8a8f98 !important;
+        font-size: 0.8125rem !important;
         font-weight: 500 !important;
+        letter-spacing: 0.01em;
     }
 
     /* 푸터 */
     .footer {
         text-align: center;
-        color: #5f6368;
-        font-size: 0.85rem;
+        color: #6b7280;
+        font-size: 0.75rem;
         margin-top: 3rem;
-        padding: 1.5rem;
-        border-top: 1px solid #e8eaed;
+        padding: 1.5rem 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     /* 에러/경고 메시지 */
     .stAlert {
-        background: #fef7e0;
-        border: 1px solid #f9ab00;
-        border-radius: 8px;
-        color: #202124;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 6px;
+        color: #fca5a5;
+    }
+
+    /* 스피너 */
+    .stSpinner > div {
+        border-color: #6366f1 transparent transparent transparent !important;
     }
 
     /* 숨기기: Streamlit 기본 요소 */
