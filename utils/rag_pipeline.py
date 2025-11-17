@@ -1,79 +1,194 @@
 """
-RAG Pipeline 구현
+RAG Pipeline 구현 (2025 최신 버전)
 Retrieval-Augmented Generation 파이프라인
+ChromaDB + BGE-M3 + FlashRank
 """
 
-from typing import List, Dict
-from langchain_community.llms import Ollama
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
-from langchain.chains import RetrievalQA
-from langchain.prompts import PromptTemplate
+from typing import List, Dict, Optional, Iterator
+from langchain_ollama import ChatOllama
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+from flashrank import Ranker, RerankRequest
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class RAGPipeline:
-    """RAG 파이프라인 클래스"""
+    """RAG 파이프라인 클래스 (2025 최신)"""
 
-    def __init__(self, model_name: str = "llama3.2:3b", temperature: float = 0.7):
+    def __init__(
+        self,
+        model_name: str = "llama3.2:3b",
+        temperature: float = 0.7,
+        use_reranking: bool = True
+    ):
         """
         Args:
             model_name: Ollama 모델 이름
             temperature: 생성 온도
+            use_reranking: Reranking 사용 여부
         """
         self.model_name = model_name
         self.temperature = temperature
+        self.use_reranking = use_reranking
 
         # LLM 초기화
-        self.llm = Ollama(
+        self.llm = ChatOllama(
             model=model_name,
             base_url="http://localhost:11434",
             temperature=temperature
         )
 
-        # 임베딩 모델 (한국어 지원)
+        # 임베딩 모델 (BGE-M3 - 한국어 SOTA)
         self.embeddings = HuggingFaceEmbeddings(
-            model_name="jhgan/ko-sroberta-multitask"
+            model_name="BAAI/bge-m3",
+            model_kwargs={"device": "cpu"},
+            encode_kwargs={"normalize_embeddings": True}
         )
+
+        # Reranker (FlashRank - 무료)
+        if use_reranking:
+            self.reranker = Ranker(model_name="ms-marco-MiniLM-L-12-v2")
+        else:
+            self.reranker = None
 
         self.vectorstore = None
         self.qa_chain = None
 
     def load_vectorstore(self, path: str):
-        """벡터 스토어 로드"""
-        self.vectorstore = FAISS.load_local(
-            path,
-            self.embeddings,
-            allow_dangerous_deserialization=True
-        )
+        """ChromaDB 벡터 스토어 로드"""
+        try:
+            self.vectorstore = Chroma(
+                persist_directory=path,
+                embedding_function=self.embeddings,
+                collection_name="company_docs"
+            )
+            logger.info(f"벡터 스토어 로드 완료: {path}")
+        except Exception as e:
+            logger.error(f"벡터 스토어 로드 실패: {e}")
+            raise
+
+    def _rerank_documents(self, query: str, documents: List) -> List:
+        """문서 재순위화 (FlashRank)"""
+        if not self.reranker or len(documents) == 0:
+            return documents
+
+        try:
+            # FlashRank 형식으로 변환
+            passages = [
+                {"id": i, "text": doc.page_content, "meta": doc.metadata}
+                for i, doc in enumerate(documents)
+            ]
+
+            rerank_request = RerankRequest(query=query, passages=passages)
+            reranked = self.reranker.rerank(rerank_request)
+
+            # 상위 3개만 반환
+            top_docs = []
+            for result in reranked[:3]:
+                doc_id = result["id"]
+                top_docs.append(documents[doc_id])
+
+            logger.info(f"Reranking 완료: {len(documents)} → {len(top_docs)}")
+            return top_docs
+        except Exception as e:
+            logger.warning(f"Reranking 실패, 원본 문서 사용: {e}")
+            return documents[:3]
 
     def create_qa_chain(self):
-        """QA 체인 생성"""
+        """QA 체인 생성 (LangChain 0.3 방식)"""
+        if not self.vectorstore:
+            raise ValueError("벡터 스토어가 로드되지 않았습니다.")
+
+        # 프롬프트 템플릿
         template = """당신은 퓨쳐시스템의 AI 어시스턴트입니다.
 제공된 컨텍스트를 바탕으로 정확하고 친절하게 답변해주세요.
-컨텍스트에 없는 정보는 "죄송합니다. 해당 정보는 확인할 수 없습니다"라고 답변하세요.
 
-컨텍스트: {context}
+답변 가이드라인:
+1. 컨텍스트에 있는 정보만 사용하세요
+2. 정보가 없으면 "죄송합니다. 해당 정보는 확인할 수 없습니다"라고 답변하세요
+3. 친절하고 전문적인 톤을 유지하세요
+4. 필요시 구체적인 예시나 추가 설명을 제공하세요
+
+컨텍스트:
+{context}
 
 질문: {question}
 
 답변:"""
 
-        prompt = PromptTemplate(
-            template=template,
-            input_variables=["context", "question"]
+        prompt = ChatPromptTemplate.from_template(template)
+
+        # Retriever 설정 (k=10으로 많이 가져온 후 reranking)
+        base_retriever = self.vectorstore.as_retriever(
+            search_type="similarity",
+            search_kwargs={"k": 10}
         )
 
-        self.qa_chain = RetrievalQA.from_chain_type(
-            llm=self.llm,
-            chain_type="stuff",
-            retriever=self.vectorstore.as_retriever(search_kwargs={"k": 3}),
-            chain_type_kwargs={"prompt": prompt}
+        # Reranking을 포함한 retriever
+        def retrieve_and_rerank(query: str) -> List:
+            docs = base_retriever.invoke(query)
+            if self.use_reranking:
+                docs = self._rerank_documents(query, docs)
+            return docs
+
+        # LCEL 체인 구성
+        def format_docs(docs):
+            return "\n\n".join(
+                f"[문서 {i+1}]\n{doc.page_content}"
+                for i, doc in enumerate(docs)
+            )
+
+        self.qa_chain = (
+            {
+                "context": lambda x: format_docs(retrieve_and_rerank(x["question"])),
+                "question": lambda x: x["question"]
+            }
+            | prompt
+            | self.llm
+            | StrOutputParser()
         )
+
+        logger.info("QA 체인 생성 완료")
 
     def query(self, question: str) -> str:
         """질문에 대한 답변 생성"""
         if not self.qa_chain:
             raise ValueError("QA chain이 초기화되지 않았습니다.")
 
-        result = self.qa_chain.invoke({"query": question})
-        return result['result']
+        try:
+            result = self.qa_chain.invoke({"question": question})
+            return result
+        except Exception as e:
+            logger.error(f"질의 처리 실패: {e}")
+            return "죄송합니다. 오류가 발생했습니다. 다시 시도해주세요."
+
+    def stream_query(self, question: str) -> Iterator[str]:
+        """스트리밍 방식으로 답변 생성"""
+        if not self.qa_chain:
+            raise ValueError("QA chain이 초기화되지 않았습니다.")
+
+        try:
+            for chunk in self.qa_chain.stream({"question": question}):
+                yield chunk
+        except Exception as e:
+            logger.error(f"스트리밍 질의 처리 실패: {e}")
+            yield "죄송합니다. 오류가 발생했습니다."
+
+    def get_relevant_documents(self, question: str, k: int = 3) -> List[Dict]:
+        """관련 문서 검색 (디버깅용)"""
+        if not self.vectorstore:
+            raise ValueError("벡터 스토어가 로드되지 않았습니다.")
+
+        docs = self.vectorstore.similarity_search(question, k=k)
+        return [
+            {
+                "content": doc.page_content,
+                "metadata": doc.metadata
+            }
+            for doc in docs
+        ]
