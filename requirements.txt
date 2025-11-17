@@ -25,7 +25,7 @@ pandas==2.2.3
 # Utilities
 python-dotenv==1.0.1
 pydantic==2.10.3
-pydantic-settings==2.7.0
+pydantic-settings>=2.10.1
 
 # Performance & Caching
 diskcache==5.6.3
