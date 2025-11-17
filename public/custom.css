@@ -1,0 +1,20 @@
+/* 테마별 로고 전환 */
+
+/* 다크 테마 - logo_dark.png 사용 */
+html[data-theme="dark"] img[alt*="logo"],
+html[data-theme="dark"] .logo {
+  content: url("/public/logo_dark.png");
+}
+
+/* 라이트 테마 - logo_light.png 사용 */
+html[data-theme="light"] img[alt*="logo"],
+html[data-theme="light"] .logo {
+  content: url("/public/logo_light.png");
+}
+
+/* 로고 이미지 스타일 */
+img[alt*="logo"],
+.logo {
+  max-height: 40px;
+  width: auto;
+}
