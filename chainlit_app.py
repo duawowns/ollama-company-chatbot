@@ -56,6 +56,7 @@ async def start():
         cl.user_session.set("model_name", model_name)
         cl.user_session.set("temperature", temperature)
         cl.user_session.set("use_reranking", use_reranking)
+        cl.user_session.set("chat_history", [])  # 대화 히스토리 초기화
 
         logger.info("RAG 파이프라인 초기화 완료")
 
@@ -79,18 +80,35 @@ async def main(message: cl.Message):
         return
 
     try:
+        # 대화 히스토리 가져오기
+        chat_history = cl.user_session.get("chat_history", [])
+
+        # 대화 히스토리 포맷팅 (최근 5개 대화만)
+        history_text = ""
+        if chat_history:
+            recent_history = chat_history[-5:]  # 최근 5개만
+            for entry in recent_history:
+                history_text += f"사용자: {entry['user']}\n어시스턴트: {entry['assistant']}\n\n"
+
         # 스트리밍 응답 생성
         msg = cl.Message(content="", author="Assistant")
         await msg.send()
 
-        # RAG 파이프라인으로 스트리밍 응답
+        # RAG 파이프라인으로 스트리밍 응답 (히스토리 포함)
         full_response = ""
-        for chunk in rag_pipeline.stream_query(message.content):
+        for chunk in rag_pipeline.stream_query(message.content, chat_history=history_text):
             full_response += chunk
             await msg.stream_token(chunk)
 
         # 최종 응답 업데이트
         await msg.update()
+
+        # 대화 히스토리에 추가
+        chat_history.append({
+            "user": message.content,
+            "assistant": full_response
+        })
+        cl.user_session.set("chat_history", chat_history)
 
     except Exception as e:
         error_msg = f"❌ 오류가 발생했습니다: {str(e)}"
@@ -122,9 +140,10 @@ async def setup_settings(settings):
         cl.user_session.set("model_name", model_name)
         cl.user_session.set("temperature", temperature)
         cl.user_session.set("use_reranking", use_reranking)
+        cl.user_session.set("chat_history", [])  # 대화 히스토리 초기화
 
         await cl.Message(
-            content=f"✅ 설정 업데이트 완료\n모델: {model_name} | Temperature: {temperature}",
+            content=f"✅ 설정 업데이트 완료\n모델: {model_name} | Temperature: {temperature}\n대화 히스토리가 초기화되었습니다.",
             author="System"
         ).send()
 

@@ -104,16 +104,20 @@ class RAGPipeline:
         if not self.vectorstore:
             raise ValueError("벡터 스토어가 로드되지 않았습니다.")
 
-        # 프롬프트 템플릿
+        # 프롬프트 템플릿 (대화 히스토리 포함)
         template = """당신은 퓨쳐시스템의 AI 어시스턴트입니다.
-사용자의 질문에 대해 제공된 컨텍스트를 바탕으로 정확하게 답변하세요.
+사용자의 질문에 대해 제공된 컨텍스트와 대화 히스토리를 바탕으로 정확하게 답변하세요.
 
 답변 규칙:
 1. 질문에 대한 평가나 칭찬 없이 바로 답변하세요
-2. 컨텍스트에 있는 정보만 사용하세요
-3. 정보가 없으면 "죄송합니다. 해당 정보는 확인할 수 없습니다"라고 답변하세요
-4. 간결하고 명확하게 답변하세요
-5. "훌륭합니다", "좋은 질문입니다" 같은 표현은 사용하지 마세요
+2. 회사 관련 질문은 컨텍스트 정보를 우선 사용하세요
+3. 이전 대화를 참조하는 질문(번역, 요약 등)은 대화 히스토리를 활용하세요
+4. 컨텍스트와 대화 히스토리 모두에 정보가 없으면 "죄송합니다. 해당 정보는 확인할 수 없습니다"라고 답변하세요
+5. 간결하고 명확하게 답변하세요
+6. "훌륭합니다", "좋은 질문입니다" 같은 표현은 사용하지 마세요
+
+대화 히스토리:
+{chat_history}
 
 컨텍스트:
 {context}
@@ -147,7 +151,8 @@ class RAGPipeline:
         self.qa_chain = (
             {
                 "context": lambda x: format_docs(retrieve_and_rerank(x["question"])),
-                "question": lambda x: x["question"]
+                "question": lambda x: x["question"],
+                "chat_history": lambda x: x.get("chat_history", "없음")
             }
             | prompt
             | self.llm
@@ -156,25 +161,41 @@ class RAGPipeline:
 
         logger.info("QA 체인 생성 완료")
 
-    def query(self, question: str) -> str:
-        """질문에 대한 답변 생성"""
+    def query(self, question: str, chat_history: str = "") -> str:
+        """질문에 대한 답변 생성
+
+        Args:
+            question: 사용자 질문
+            chat_history: 이전 대화 히스토리 (선택)
+        """
         if not self.qa_chain:
             raise ValueError("QA chain이 초기화되지 않았습니다.")
 
         try:
-            result = self.qa_chain.invoke({"question": question})
+            result = self.qa_chain.invoke({
+                "question": question,
+                "chat_history": chat_history if chat_history else "없음"
+            })
             return result
         except Exception as e:
             logger.error(f"질의 처리 실패: {e}")
             return "죄송합니다. 오류가 발생했습니다. 다시 시도해주세요."
 
-    def stream_query(self, question: str) -> Iterator[str]:
-        """스트리밍 방식으로 답변 생성"""
+    def stream_query(self, question: str, chat_history: str = "") -> Iterator[str]:
+        """스트리밍 방식으로 답변 생성
+
+        Args:
+            question: 사용자 질문
+            chat_history: 이전 대화 히스토리 (선택)
+        """
         if not self.qa_chain:
             raise ValueError("QA chain이 초기화되지 않았습니다.")
 
         try:
-            for chunk in self.qa_chain.stream({"question": question}):
+            for chunk in self.qa_chain.stream({
+                "question": question,
+                "chat_history": chat_history if chat_history else "없음"
+            }):
                 yield chunk
         except Exception as e:
             logger.error(f"스트리밍 질의 처리 실패: {e}")
