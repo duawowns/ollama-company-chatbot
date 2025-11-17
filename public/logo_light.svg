@@ -1,0 +1,15 @@
+<svg width="180" height="40" viewBox="0 0 180 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- 아이콘 부분 -->
+  <g>
+    <!-- 보안 실드 아이콘 -->
+    <path d="M20 5 L12 8 L12 16 C12 21 16 26 20 28 C24 26 28 21 28 16 L28 8 Z"
+          fill="none" stroke="#00D9FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M16 16 L19 19 L24 13"
+          fill="none" stroke="#00D9FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- 텍스트 부분 -->
+  <text x="38" y="25" font-family="Inter, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#202124">
+    퓨쳐시스템 인트라넷 챗봇
+  </text>
+</svg>
