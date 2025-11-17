@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+logs/
+chainlit.log
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Tests (if any)
+tests/
+test_*.py
+
+# Temporary files
+*.tmp
+.DS_Store
+
+# Docker
+docker-compose.override.yml
+.env
