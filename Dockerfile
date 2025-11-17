@@ -21,6 +21,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 애플리케이션 코드 복사
 COPY --chown=chatbot:chatbot . .
 
+# Vectorstore 복사 확인 (명시적)
+COPY --chown=chatbot:chatbot data/vectorstore /app/data/vectorstore
+
 # 환경변수 설정
 ENV PYTHONUNBUFFERED=1
 ENV OLLAMA_BASE_URL=http://ollama:11434
