@@ -68,25 +68,31 @@ class RAGPipeline:
         self.use_reranking = use_reranking
 
         # LLM 초기화 (환경변수 사용)
+        logger.info(f"Initializing Ollama LLM: {model_name} at {OLLAMA_BASE_URL}")
         self.llm = ChatOllama(
             model=model_name,
             base_url=OLLAMA_BASE_URL,
             temperature=temperature
         )
-        logger.info(f"Ollama LLM 초기화: {OLLAMA_BASE_URL}")
+        logger.info(f"✅ Ollama LLM initialized")
 
         # 임베딩 모델 (BGE-M3 - 한국어 SOTA)
+        logger.info("Loading BGE-M3 embeddings model (this may take 2-5 minutes on first run)...")
         self.embeddings = HuggingFaceEmbeddings(
             model_name="BAAI/bge-m3",
             model_kwargs={"device": "cpu"},
             encode_kwargs={"normalize_embeddings": True}
         )
+        logger.info("✅ BGE-M3 embeddings model loaded")
 
         # Reranker (FlashRank - 무료)
         if use_reranking:
+            logger.info("Loading FlashRank reranker...")
             self.reranker = Ranker(model_name="ms-marco-MiniLM-L-12-v2")
+            logger.info("✅ FlashRank reranker loaded")
         else:
             self.reranker = None
+            logger.info("Reranking disabled")
 
         self.vectorstore = None
         self.qa_chain = None

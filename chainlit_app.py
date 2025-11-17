@@ -43,6 +43,15 @@ logger.info(f"Vectorstore exists: {(project_root / 'data' / 'vectorstore').exist
 logger.info(f"OLLAMA_BASE_URL: {os.getenv('OLLAMA_BASE_URL', 'not set')}")
 logger.info("=" * 50)
 
+# BGE-M3 모델 미리 로드 (첫 실행 시 다운로드 시간 단축)
+logger.info("Pre-loading BGE-M3 embeddings model...")
+try:
+    from sentence_transformers import SentenceTransformer
+    _ = SentenceTransformer("BAAI/bge-m3")
+    logger.info("✅ BGE-M3 model pre-loaded successfully")
+except Exception as e:
+    logger.warning(f"⚠️ BGE-M3 model pre-load failed (will load on first use): {e}")
+
 
 @cl.on_chat_start
 async def start():

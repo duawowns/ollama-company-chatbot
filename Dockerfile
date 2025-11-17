@@ -44,9 +44,10 @@ USER chatbot
 # 포트 노출
 EXPOSE 8501
 
-# 헬스체크 (모델 다운로드 시간 고려 - 5분 유예)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=300s --retries=5 \
-    CMD curl -f http://localhost:8501/ || exit 1
+# 헬스체크 비활성화 (BGE-M3 모델 다운로드 시간 고려)
+# Railway가 포트 접근으로 자동 감지
+# HEALTHCHECK --interval=30s --timeout=10s --start-period=300s --retries=5 \
+#     CMD curl -f http://localhost:8501/ || exit 1
 
 # Chainlit 실행 (모델은 첫 실행 시 자동 다운로드)
 CMD ["chainlit", "run", "chainlit_app.py", "--host", "0.0.0.0", "--port", "8501", "--headless"]
