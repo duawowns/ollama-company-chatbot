@@ -13,8 +13,39 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from flashrank import Ranker, RerankRequest
 import logging
+import os
 
 logger = logging.getLogger(__name__)
+
+# 환경변수에서 설정 로드
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+MAX_QUERY_LENGTH = int(os.getenv("MAX_QUERY_LENGTH", "500"))
+MAX_HISTORY_ITEMS = int(os.getenv("MAX_HISTORY_ITEMS", "5"))
+
+
+def validate_input(query: str) -> None:
+    """입력 검증 (보안)
+
+    Args:
+        query: 사용자 입력 질문
+
+    Raises:
+        ValueError: 입력이 유효하지 않은 경우
+    """
+    if not query or not query.strip():
+        raise ValueError("질문을 입력해주세요.")
+
+    if len(query) > MAX_QUERY_LENGTH:
+        raise ValueError(f"질문은 {MAX_QUERY_LENGTH}자 이하여야 합니다.")
+
+    # 잠재적으로 위험한 패턴 차단
+    dangerous_patterns = ["<script", "javascript:", "onerror=", "onclick="]
+    query_lower = query.lower()
+    for pattern in dangerous_patterns:
+        if pattern in query_lower:
+            raise ValueError("허용되지 않는 문자가 포함되어 있습니다.")
+
+    logger.debug(f"입력 검증 통과: {len(query)}자")
 
 
 class RAGPipeline:
@@ -36,12 +67,13 @@ class RAGPipeline:
         self.temperature = temperature
         self.use_reranking = use_reranking
 
-        # LLM 초기화
+        # LLM 초기화 (환경변수 사용)
         self.llm = ChatOllama(
             model=model_name,
-            base_url="http://localhost:11434",
+            base_url=OLLAMA_BASE_URL,
             temperature=temperature
         )
+        logger.info(f"Ollama LLM 초기화: {OLLAMA_BASE_URL}")
 
         # 임베딩 모델 (BGE-M3 - 한국어 SOTA)
         self.embeddings = HuggingFaceEmbeddings(
@@ -171,12 +203,18 @@ class RAGPipeline:
         if not self.qa_chain:
             raise ValueError("QA chain이 초기화되지 않았습니다.")
 
+        # 입력 검증
+        validate_input(question)
+
         try:
             result = self.qa_chain.invoke({
                 "question": question,
                 "chat_history": chat_history if chat_history else "없음"
             })
             return result
+        except ValueError as e:
+            # 입력 검증 오류는 그대로 전달
+            raise
         except Exception as e:
             logger.error(f"질의 처리 실패: {e}")
             return "죄송합니다. 오류가 발생했습니다. 다시 시도해주세요."
@@ -190,6 +228,13 @@ class RAGPipeline:
         """
         if not self.qa_chain:
             raise ValueError("QA chain이 초기화되지 않았습니다.")
+
+        # 입력 검증
+        try:
+            validate_input(question)
+        except ValueError as e:
+            yield f"❌ {str(e)}"
+            return
 
         try:
             for chunk in self.qa_chain.stream({
