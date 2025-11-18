@@ -1,0 +1,42 @@
+# Hugging Face Spaces용 Dockerfile (HF Inference API 사용)
+
+FROM python:3.12-slim
+
+# 작업 디렉토리 설정
+WORKDIR /app
+
+# 시스템 의존성 설치
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Python 의존성 설치
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Data 디렉토리 복사 (vectorstore 포함)
+COPY data/ /app/data/
+
+# 애플리케이션 코드 복사
+COPY . .
+
+# 환경변수 설정
+ENV PYTHONUNBUFFERED=1
+ENV USE_HF_INFERENCE=true
+ENV LOG_LEVEL=INFO
+ENV AUTH_ENABLED=false
+ENV RATE_LIMIT_PER_MINUTE=30
+ENV RATE_LIMIT_PER_HOUR=100
+ENV HF_HOME=/app/.cache/huggingface
+ENV TRANSFORMERS_CACHE=/app/.cache/transformers
+
+# 캐시 및 로그 디렉토리 생성
+RUN mkdir -p /app/logs /app/.cache/huggingface /app/.cache/transformers
+
+# 포트 노출
+EXPOSE 8501
+
+# Chainlit 실행
+CMD ["chainlit", "run", "chainlit_app.py", "--host", "0.0.0.0", "--port", "8501", "--headless"]

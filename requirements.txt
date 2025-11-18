@@ -6,6 +6,10 @@ langchain==0.3.13
 langchain-community==0.3.13
 langchain-core==0.3.28
 langchain-ollama==0.2.1
+langchain-huggingface==0.1.2
+
+# HuggingFace (Inference API)
+huggingface-hub==0.26.5
 
 # Vector Store (ChromaDB - RAG 최적화)
 chromadb==0.5.23

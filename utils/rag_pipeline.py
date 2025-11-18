@@ -2,10 +2,10 @@
 RAG Pipeline 구현 (2025 최신 버전)
 Retrieval-Augmented Generation 파이프라인
 ChromaDB + BGE-M3 + FlashRank
+지원: Ollama (Railway) / HuggingFace Inference API (HF Spaces)
 """
 
 from typing import List, Dict, Optional, Iterator
-from langchain_ollama import ChatOllama
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import ChatPromptTemplate
@@ -18,9 +18,17 @@ import os
 logger = logging.getLogger(__name__)
 
 # 환경변수에서 설정 로드
+USE_HF_INFERENCE = os.getenv("USE_HF_INFERENCE", "false").lower() == "true"
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+HUGGINGFACEHUB_API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN", "")
 MAX_QUERY_LENGTH = int(os.getenv("MAX_QUERY_LENGTH", "500"))
 MAX_HISTORY_ITEMS = int(os.getenv("MAX_HISTORY_ITEMS", "5"))
+
+# LLM import (조건부)
+if USE_HF_INFERENCE:
+    from langchain_huggingface import HuggingFaceEndpoint
+else:
+    from langchain_ollama import ChatOllama
 
 
 def validate_input(query: str) -> None:
@@ -59,7 +67,7 @@ class RAGPipeline:
     ):
         """
         Args:
-            model_name: Ollama 모델 이름
+            model_name: Ollama 모델 이름 또는 HF 모델 repo_id
             temperature: 생성 온도
             use_reranking: Reranking 사용 여부
         """
@@ -67,20 +75,44 @@ class RAGPipeline:
         self.temperature = temperature
         self.use_reranking = use_reranking
 
-        # LLM 초기화 (환경변수 사용)
-        logger.info(f"Initializing Ollama LLM: {model_name} at {OLLAMA_BASE_URL}")
-        try:
-            self.llm = ChatOllama(
-                model=model_name,
-                base_url=OLLAMA_BASE_URL,
-                temperature=temperature,
-                timeout=30  # 30초 타임아웃
-            )
-            logger.info(f"✅ Ollama LLM initialized")
-        except Exception as e:
-            error_msg = f"Ollama 서버에 연결할 수 없습니다. URL: {OLLAMA_BASE_URL}"
-            logger.error(f"{error_msg} | Error: {e}")
-            raise ConnectionError(error_msg) from e
+        # LLM 초기화 (환경변수에 따라 Ollama 또는 HF Inference)
+        if USE_HF_INFERENCE:
+            logger.info(f"Initializing HuggingFace Inference API: {model_name}")
+            try:
+                # HF Inference API 모델 매핑
+                hf_model_map = {
+                    "llama3.2:3b": "meta-llama/Llama-3.2-3B-Instruct",
+                    "llama3.1:8b": "meta-llama/Llama-3.1-8B-Instruct",
+                    "mistral:7b": "mistralai/Mistral-7B-Instruct-v0.2"
+                }
+                repo_id = hf_model_map.get(model_name, model_name)
+
+                self.llm = HuggingFaceEndpoint(
+                    repo_id=repo_id,
+                    task="text-generation",
+                    max_new_tokens=512,
+                    temperature=temperature,
+                    huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN
+                )
+                logger.info(f"✅ HuggingFace Inference API initialized: {repo_id}")
+            except Exception as e:
+                error_msg = f"HuggingFace Inference API 초기화 실패"
+                logger.error(f"{error_msg} | Error: {e}")
+                raise ConnectionError(error_msg) from e
+        else:
+            logger.info(f"Initializing Ollama LLM: {model_name} at {OLLAMA_BASE_URL}")
+            try:
+                self.llm = ChatOllama(
+                    model=model_name,
+                    base_url=OLLAMA_BASE_URL,
+                    temperature=temperature,
+                    timeout=30  # 30초 타임아웃
+                )
+                logger.info(f"✅ Ollama LLM initialized")
+            except Exception as e:
+                error_msg = f"Ollama 서버에 연결할 수 없습니다. URL: {OLLAMA_BASE_URL}"
+                logger.error(f"{error_msg} | Error: {e}")
+                raise ConnectionError(error_msg) from e
 
         # 임베딩 모델 (BGE-M3 - 한국어 SOTA)
         logger.info("Loading BGE-M3 embeddings model (this may take 2-5 minutes on first run)...")
@@ -172,10 +204,10 @@ class RAGPipeline:
 
         prompt = ChatPromptTemplate.from_template(template)
 
-        # Retriever 설정 (속도 최적화 위해 k=3)
+        # Retriever 설정 (GPU 환경에서는 k=10으로 품질 향상)
         base_retriever = self.vectorstore.as_retriever(
             search_type="similarity",
-            search_kwargs={"k": 3}
+            search_kwargs={"k": 10}
         )
 
         # Reranking을 포함한 retriever
