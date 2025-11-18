@@ -69,12 +69,18 @@ class RAGPipeline:
 
         # LLM 초기화 (환경변수 사용)
         logger.info(f"Initializing Ollama LLM: {model_name} at {OLLAMA_BASE_URL}")
-        self.llm = ChatOllama(
-            model=model_name,
-            base_url=OLLAMA_BASE_URL,
-            temperature=temperature
-        )
-        logger.info(f"✅ Ollama LLM initialized")
+        try:
+            self.llm = ChatOllama(
+                model=model_name,
+                base_url=OLLAMA_BASE_URL,
+                temperature=temperature,
+                timeout=30  # 30초 타임아웃
+            )
+            logger.info(f"✅ Ollama LLM initialized")
+        except Exception as e:
+            error_msg = f"Ollama 서버에 연결할 수 없습니다. URL: {OLLAMA_BASE_URL}"
+            logger.error(f"{error_msg} | Error: {e}")
+            raise ConnectionError(error_msg) from e
 
         # 임베딩 모델 (BGE-M3 - 한국어 SOTA)
         logger.info("Loading BGE-M3 embeddings model (this may take 2-5 minutes on first run)...")
@@ -248,9 +254,12 @@ class RAGPipeline:
                 "chat_history": chat_history if chat_history else "없음"
             }):
                 yield chunk
+        except ConnectionError as e:
+            logger.error(f"Ollama 연결 실패: {e}")
+            yield "❌ Ollama 서버에 연결할 수 없습니다. 서버가 시작 중이거나 일시적인 문제가 발생했습니다."
         except Exception as e:
             logger.error(f"스트리밍 질의 처리 실패: {e}")
-            yield "죄송합니다. 오류가 발생했습니다."
+            yield "❌ 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
 
     def get_relevant_documents(self, question: str, k: int = 3) -> List[Dict]:
         """관련 문서 검색 (디버깅용)"""

@@ -104,6 +104,10 @@ async def start():
 
         logger.info("RAG 파이프라인 초기화 완료")
 
+    except ConnectionError as e:
+        error_msg = f"❌ Ollama 서버에 연결할 수 없습니다.\n\n서버가 시작 중이거나 연결 설정에 문제가 있을 수 있습니다.\n잠시 후 다시 시도해주세요."
+        await cl.Message(content=error_msg, author="System").send()
+        logger.error(f"Ollama 연결 실패: {e}", exc_info=True)
     except Exception as e:
         error_msg = f"❌ RAG 초기화 실패: {e}"
         await cl.Message(content=error_msg, author="System").send()
@@ -177,6 +181,10 @@ async def main(message: cl.Message):
         # 성공 로깅
         logger.info(f"Query processed successfully for user {user_id}: {len(message.content)} chars -> {len(full_response)} chars")
 
+    except ConnectionError as e:
+        error_msg = "❌ Ollama 서버에 연결할 수 없습니다.\n서버가 시작 중이거나 일시적인 문제가 발생했습니다.\n잠시 후 다시 시도해주세요."
+        await cl.Message(content=error_msg, author="System").send()
+        logger.error(f"Ollama 연결 오류 (user: {user_id}): {e}", exc_info=True)
     except Exception as e:
         error_msg = f"❌ 오류가 발생했습니다: {str(e)}"
         await cl.Message(content=error_msg, author="System").send()
@@ -214,6 +222,11 @@ async def setup_settings(settings):
             author="System"
         ).send()
 
+    except ConnectionError as e:
+        await cl.Message(
+            content=f"❌ Ollama 서버에 연결할 수 없습니다.\n잠시 후 다시 시도해주세요.",
+            author="System"
+        ).send()
     except Exception as e:
         await cl.Message(
             content=f"❌ 설정 업데이트 실패: {e}",
