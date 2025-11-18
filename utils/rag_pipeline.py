@@ -172,10 +172,10 @@ class RAGPipeline:
 
         prompt = ChatPromptTemplate.from_template(template)
 
-        # Retriever 설정 (k=10으로 많이 가져온 후 reranking)
+        # Retriever 설정 (속도 최적화 위해 k=3)
         base_retriever = self.vectorstore.as_retriever(
             search_type="similarity",
-            search_kwargs={"k": 10}
+            search_kwargs={"k": 3}
         )
 
         # Reranking을 포함한 retriever

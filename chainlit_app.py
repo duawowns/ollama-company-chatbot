@@ -63,7 +63,7 @@ async def start():
         # 기본 설정 (Railway 무료 플랜용 경량 모델)
         model_name = "llama3.2:3b"
         temperature = 0.7
-        use_reranking = True
+        use_reranking = False  # 속도 최적화 위해 비활성화
 
         logger.info(f"Model: {model_name}, Temperature: {temperature}, Reranking: {use_reranking}")
 
