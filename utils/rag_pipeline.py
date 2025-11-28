@@ -74,7 +74,9 @@ class RAGPipeline:
         self.llm = ChatGroq(
             model=model_name,
             api_key=GROQ_API_KEY,
-            temperature=temperature
+            temperature=temperature,
+            timeout=30.0,  # 30초 타임아웃
+            max_retries=2   # 최대 2번 재시도
         )
         logger.info(f"✅ Groq LLM initialized")
 
@@ -245,14 +247,22 @@ class RAGPipeline:
             return
 
         try:
+            logger.info(f"Starting stream query: {question[:50]}...")
             for chunk in self.qa_chain.stream({
                 "question": question,
                 "chat_history": chat_history if chat_history else "없음"
             }):
                 yield chunk
+            logger.info("Stream query completed successfully")
+        except TimeoutError as e:
+            logger.error(f"API 타임아웃: {e}")
+            yield "⏱️ API 응답 시간이 초과되었습니다. 잠시 후 다시 시도해주세요."
         except Exception as e:
-            logger.error(f"스트리밍 질의 처리 실패: {e}")
-            yield "죄송합니다. 오류가 발생했습니다."
+            logger.error(f"스트리밍 질의 처리 실패: {e}", exc_info=True)
+            if "rate limit" in str(e).lower():
+                yield "⚠️ API 요청 한도를 초과했습니다. 잠시 후 다시 시도해주세요."
+            else:
+                yield f"❌ 오류가 발생했습니다: {str(e)}"
 
     def get_relevant_documents(self, question: str, k: int = 3) -> List[Dict]:
         """관련 문서 검색 (디버깅용)"""
