@@ -44,11 +44,11 @@ logger.info(f"GROQ_API_KEY: {'set' if os.getenv('GROQ_API_KEY') else 'not set'}"
 logger.info("=" * 50)
 
 # Pre-loading: 시작 시 모델 로드하여 첫 질의 타임아웃 방지
-logger.info("Pre-loading all-MiniLM-L6-v2 embeddings model...")
+logger.info("Pre-loading paraphrase-multilingual-MiniLM-L12-v2 embeddings model...")
 try:
     from sentence_transformers import SentenceTransformer
-    _ = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-    logger.info("✅ all-MiniLM-L6-v2 model pre-loaded successfully")
+    _ = SentenceTransformer("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    logger.info("✅ paraphrase-multilingual-MiniLM-L12-v2 model pre-loaded successfully")
 except Exception as e:
     logger.warning(f"⚠️ Model pre-load failed (will load on first use): {e}")
 

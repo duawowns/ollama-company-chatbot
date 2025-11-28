@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 모델 사전 다운로드 (빌드 시 캐싱) - 첫 시작 타임아웃 방지
 ENV HF_HOME=/app/.cache/huggingface
 ENV TRANSFORMERS_CACHE=/app/.cache/transformers
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')"
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')"
 
 # Data 디렉토리 먼저 복사 (vectorstore 포함)
 COPY data/ /app/data/

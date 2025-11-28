@@ -80,14 +80,14 @@ class RAGPipeline:
         )
         logger.info(f"✅ Groq LLM initialized")
 
-        # 임베딩 모델 (all-MiniLM-L6-v2 - 초경량, 빠른 로딩 ~5초)
-        logger.info("Loading all-MiniLM-L6-v2 embeddings (lightweight, fast loading)...")
+        # 임베딩 모델 (paraphrase-multilingual-MiniLM-L12-v2 - 다국어 지원)
+        logger.info("Loading paraphrase-multilingual-MiniLM-L12-v2 embeddings (multilingual support)...")
         self.embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
+            model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
             model_kwargs={"device": "cpu"},
             encode_kwargs={"normalize_embeddings": True}
         )
-        logger.info("✅ all-MiniLM-L6-v2 embeddings loaded (~250MB memory)")
+        logger.info("✅ paraphrase-multilingual-MiniLM-L12-v2 embeddings loaded (~420MB memory)")
 
         # Reranker (FlashRank - 무료)
         if use_reranking:
