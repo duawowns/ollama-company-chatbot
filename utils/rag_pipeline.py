@@ -80,14 +80,14 @@ class RAGPipeline:
         )
         logger.info(f"✅ Groq LLM initialized")
 
-        # 임베딩 모델 (paraphrase-multilingual-MiniLM-L12-v2 - 다국어 지원)
-        logger.info("Loading paraphrase-multilingual-MiniLM-L12-v2 embeddings (multilingual support)...")
+        # 임베딩 모델 (distiluse-base-multilingual-cased-v2 - 다국어 지원, 메모리 최적화)
+        logger.info("Loading distiluse-base-multilingual-cased-v2 embeddings (multilingual, optimized)...")
         self.embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+            model_name="sentence-transformers/distiluse-base-multilingual-cased-v2",
             model_kwargs={"device": "cpu"},
             encode_kwargs={"normalize_embeddings": True}
         )
-        logger.info("✅ paraphrase-multilingual-MiniLM-L12-v2 embeddings loaded (~420MB memory)")
+        logger.info("✅ distiluse-base-multilingual-cased-v2 embeddings loaded (~250MB memory)")
 
         # Reranker (FlashRank - 무료)
         if use_reranking:
