@@ -43,14 +43,8 @@ logger.info(f"Vectorstore exists: {(project_root / 'data' / 'vectorstore').exist
 logger.info(f"GROQ_API_KEY: {'set' if os.getenv('GROQ_API_KEY') else 'not set'}")
 logger.info("=" * 50)
 
-# all-MiniLM-L6-v2 모델 미리 로드 (경량 모델, ~80MB)
-logger.info("Pre-loading all-MiniLM-L6-v2 embeddings model...")
-try:
-    from sentence_transformers import SentenceTransformer
-    _ = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-    logger.info("✅ all-MiniLM-L6-v2 model pre-loaded successfully")
-except Exception as e:
-    logger.warning(f"⚠️ all-MiniLM-L6-v2 model pre-load failed (will load on first use): {e}")
+# Pre-loading 제거: 메모리 절약을 위해 첫 질의 시 lazy loading
+logger.info("Embedding model will be loaded on first query (lazy loading)")
 
 
 @cl.on_chat_start
@@ -63,7 +57,7 @@ async def start():
         # 기본 설정 (Groq API)
         model_name = "llama-3.1-8b-instant"
         temperature = 0.7
-        use_reranking = True
+        use_reranking = False  # 메모리 절약을 위해 비활성화 (~100MB 절약)
 
         logger.info(f"Model: {model_name}, Temperature: {temperature}, Reranking: {use_reranking}")
 
