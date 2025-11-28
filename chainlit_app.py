@@ -1,6 +1,6 @@
 """
 퓨쳐시스템 회사소개 챗봇 (Chainlit 버전)
-RAG 챗봇 - ChromaDB + BGE-M3 + FlashRank + Ollama
+RAG 챗봇 - ChromaDB + BGE-M3 + FlashRank + Groq API
 프로덕션 버전: 인증 + Rate Limiting + 로깅
 """
 
@@ -40,7 +40,7 @@ logger.info("Chainlit App Starting...")
 logger.info(f"Project root: {project_root}")
 logger.info(f"Vectorstore path: {project_root / 'data' / 'vectorstore'}")
 logger.info(f"Vectorstore exists: {(project_root / 'data' / 'vectorstore').exists()}")
-logger.info(f"OLLAMA_BASE_URL: {os.getenv('OLLAMA_BASE_URL', 'not set')}")
+logger.info(f"GROQ_API_KEY: {'set' if os.getenv('GROQ_API_KEY') else 'not set'}")
 logger.info("=" * 50)
 
 # BGE-M3 모델 미리 로드 (첫 실행 시 다운로드 시간 단축)
@@ -60,10 +60,10 @@ async def start():
     try:
         logger.info("=== Starting RAG pipeline initialization ===")
 
-        # 기본 설정 (HF Spaces GPU 환경에서는 성능 최적화)
-        model_name = "llama3.2:3b"
+        # 기본 설정 (Groq API)
+        model_name = "llama-3.1-8b-instant"
         temperature = 0.7
-        use_reranking = True  # GPU 환경에서 다시 활성화
+        use_reranking = True
 
         logger.info(f"Model: {model_name}, Temperature: {temperature}, Reranking: {use_reranking}")
 
@@ -104,10 +104,6 @@ async def start():
 
         logger.info("RAG 파이프라인 초기화 완료")
 
-    except ConnectionError as e:
-        error_msg = f"❌ Ollama 서버에 연결할 수 없습니다.\n\n서버가 시작 중이거나 연결 설정에 문제가 있을 수 있습니다.\n잠시 후 다시 시도해주세요."
-        await cl.Message(content=error_msg, author="System").send()
-        logger.error(f"Ollama 연결 실패: {e}", exc_info=True)
     except Exception as e:
         error_msg = f"❌ RAG 초기화 실패: {e}"
         await cl.Message(content=error_msg, author="System").send()
@@ -181,10 +177,6 @@ async def main(message: cl.Message):
         # 성공 로깅
         logger.info(f"Query processed successfully for user {user_id}: {len(message.content)} chars -> {len(full_response)} chars")
 
-    except ConnectionError as e:
-        error_msg = "❌ Ollama 서버에 연결할 수 없습니다.\n서버가 시작 중이거나 일시적인 문제가 발생했습니다.\n잠시 후 다시 시도해주세요."
-        await cl.Message(content=error_msg, author="System").send()
-        logger.error(f"Ollama 연결 오류 (user: {user_id}): {e}", exc_info=True)
     except Exception as e:
         error_msg = f"❌ 오류가 발생했습니다: {str(e)}"
         await cl.Message(content=error_msg, author="System").send()
@@ -194,7 +186,7 @@ async def main(message: cl.Message):
 @cl.on_settings_update
 async def setup_settings(settings):
     """설정 업데이트 시 호출"""
-    model_name = settings.get("model", "llama3.1:8b")
+    model_name = settings.get("model", "llama-3.1-8b-instant")
     temperature = settings.get("temperature", 0.7)
     use_reranking = settings.get("use_reranking", True)
 
@@ -222,11 +214,6 @@ async def setup_settings(settings):
             author="System"
         ).send()
 
-    except ConnectionError as e:
-        await cl.Message(
-            content=f"❌ Ollama 서버에 연결할 수 없습니다.\n잠시 후 다시 시도해주세요.",
-            author="System"
-        ).send()
     except Exception as e:
         await cl.Message(
             content=f"❌ 설정 업데이트 실패: {e}",

@@ -9,7 +9,7 @@ venv/
 ENV/
 .venv
 
-# Ollama models
+# Models
 *.gguf
 models/
 

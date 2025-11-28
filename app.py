@@ -1,7 +1,7 @@
 """
 퓨쳐시스템 회사소개 챗봇
 Streamlit 기반 RAG 챗봇 (2025 최신 기술 스택)
-ChromaDB + BGE-M3 + FlashRank + Ollama
+ChromaDB + BGE-M3 + FlashRank + Groq API
 """
 
 import streamlit as st
@@ -288,10 +288,10 @@ def main():
         st.header("설정")
         st.markdown("---")
 
-        # 모델 선택
+        # 모델 선택 (Groq API)
         model_option = st.selectbox(
             "모델",
-            ["llama3.1:8b", "llama3.2:3b", "mistral:7b", "gemma:7b"],
+            ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"],
             help="사용할 AI 모델 선택"
         )
 

@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: futuresystem-chatbot
+    runtime: docker
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: LOG_LEVEL
+        value: INFO
+      - key: AUTH_ENABLED
+        value: false
+      - key: RATE_LIMIT_PER_MINUTE
+        value: 30
+      - key: RATE_LIMIT_PER_HOUR
+        value: 100
+      - key: PYTHONUNBUFFERED
+        value: 1
