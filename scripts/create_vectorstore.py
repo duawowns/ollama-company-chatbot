@@ -1,6 +1,6 @@
 """
 ChromaDB 벡터 스토어 생성 스크립트
-paraphrase-multilingual-MiniLM-L12-v2 임베딩 사용 (다국어 지원, 한국어 포함)
+all-MiniLM-L6-v2 임베딩 사용 (초경량, 빠른 로딩)
 """
 
 import sys
@@ -28,10 +28,10 @@ def create_vectorstore():
     logger.info("ChromaDB 벡터 스토어 생성 시작")
     logger.info("=" * 60)
 
-    # 1. 임베딩 모델 초기화 (paraphrase-multilingual-MiniLM-L12-v2 - 다국어)
-    logger.info("1. paraphrase-multilingual-MiniLM-L12-v2 임베딩 모델 로드 중...")
+    # 1. 임베딩 모델 초기화 (all-MiniLM-L6-v2 - 초경량)
+    logger.info("1. all-MiniLM-L6-v2 임베딩 모델 로드 중...")
     embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
         model_kwargs={"device": "cpu"},
         encode_kwargs={"normalize_embeddings": True}
     )
@@ -118,7 +118,7 @@ def create_vectorstore():
     logger.info("=" * 60)
     logger.info(f"\n저장 위치: {vectorstore_path}")
     logger.info(f"문서 수: {len(split_docs)}")
-    logger.info(f"임베딩 모델: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    logger.info(f"임베딩 모델: sentence-transformers/all-MiniLM-L6-v2")
     logger.info(f"벡터 DB: ChromaDB")
 
 
