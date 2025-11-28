@@ -78,14 +78,14 @@ class RAGPipeline:
         )
         logger.info(f"✅ Groq LLM initialized")
 
-        # 임베딩 모델 (BGE-M3 - 한국어 SOTA)
-        logger.info("Loading BGE-M3 embeddings model (this may take 2-5 minutes on first run)...")
+        # 임베딩 모델 (all-MiniLM-L6-v2 - 경량, 무료 플랜 호환)
+        logger.info("Loading embedding model...")
         self.embeddings = HuggingFaceEmbeddings(
-            model_name="BAAI/bge-m3",
+            model_name="sentence-transformers/all-MiniLM-L6-v2",
             model_kwargs={"device": "cpu"},
             encode_kwargs={"normalize_embeddings": True}
         )
-        logger.info("✅ BGE-M3 embeddings model loaded")
+        logger.info("✅ Embedding model loaded")
 
         # Reranker (FlashRank - 무료)
         if use_reranking:

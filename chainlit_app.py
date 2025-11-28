@@ -43,14 +43,14 @@ logger.info(f"Vectorstore exists: {(project_root / 'data' / 'vectorstore').exist
 logger.info(f"GROQ_API_KEY: {'set' if os.getenv('GROQ_API_KEY') else 'not set'}")
 logger.info("=" * 50)
 
-# BGE-M3 모델 미리 로드 (첫 실행 시 다운로드 시간 단축)
-logger.info("Pre-loading BGE-M3 embeddings model...")
+# 임베딩 모델 미리 로드
+logger.info("Pre-loading embedding model...")
 try:
     from sentence_transformers import SentenceTransformer
-    _ = SentenceTransformer("BAAI/bge-m3")
-    logger.info("✅ BGE-M3 model pre-loaded successfully")
+    _ = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+    logger.info("✅ Embedding model pre-loaded successfully")
 except Exception as e:
-    logger.warning(f"⚠️ BGE-M3 model pre-load failed (will load on first use): {e}")
+    logger.warning(f"⚠️ Embedding model pre-load failed (will load on first use): {e}")
 
 
 @cl.on_chat_start
