@@ -78,14 +78,14 @@ class RAGPipeline:
         )
         logger.info(f"✅ Groq LLM initialized")
 
-        # 임베딩 모델 (all-MiniLM-L6-v2 - 경량, 무료 플랜 호환)
-        logger.info("Loading embedding model...")
+        # 임베딩 모델 (all-MiniLM-L6-v2 - 경량 모델, 메모리 최적화)
+        logger.info("Loading all-MiniLM-L6-v2 embeddings model (~80MB)...")
         self.embeddings = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-MiniLM-L6-v2",
             model_kwargs={"device": "cpu"},
             encode_kwargs={"normalize_embeddings": True}
         )
-        logger.info("✅ Embedding model loaded")
+        logger.info("✅ all-MiniLM-L6-v2 embeddings model loaded")
 
         # Reranker (FlashRank - 무료)
         if use_reranking:

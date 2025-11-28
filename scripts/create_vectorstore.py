@@ -1,6 +1,6 @@
 """
 ChromaDB 벡터 스토어 생성 스크립트
-all-MiniLM-L6-v2 임베딩 사용 (경량 모델)
+all-MiniLM-L6-v2 임베딩 사용 (경량 모델, 메모리 최적화)
 """
 
 import sys
@@ -28,8 +28,8 @@ def create_vectorstore():
     logger.info("ChromaDB 벡터 스토어 생성 시작")
     logger.info("=" * 60)
 
-    # 1. 임베딩 모델 초기화 (all-MiniLM-L6-v2 - 경량)
-    logger.info("1. 임베딩 모델 로드 중...")
+    # 1. 임베딩 모델 초기화 (all-MiniLM-L6-v2 - 경량 모델)
+    logger.info("1. all-MiniLM-L6-v2 임베딩 모델 로드 중...")
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2",
         model_kwargs={"device": "cpu"},
@@ -118,7 +118,11 @@ def create_vectorstore():
     logger.info("=" * 60)
     logger.info(f"\n저장 위치: {vectorstore_path}")
     logger.info(f"문서 수: {len(split_docs)}")
+<<<<<<< HEAD
     logger.info(f"임베딩 모델: all-MiniLM-L6-v2")
+=======
+    logger.info(f"임베딩 모델: sentence-transformers/all-MiniLM-L6-v2")
+>>>>>>> 288ece0 (perf: 임베딩 모델 경량화로 Render 무료 플랜 메모리 최적화)
     logger.info(f"벡터 DB: ChromaDB")
 
 

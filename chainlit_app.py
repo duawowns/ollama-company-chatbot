@@ -43,14 +43,14 @@ logger.info(f"Vectorstore exists: {(project_root / 'data' / 'vectorstore').exist
 logger.info(f"GROQ_API_KEY: {'set' if os.getenv('GROQ_API_KEY') else 'not set'}")
 logger.info("=" * 50)
 
-# 임베딩 모델 미리 로드
-logger.info("Pre-loading embedding model...")
+# all-MiniLM-L6-v2 모델 미리 로드 (경량 모델, ~80MB)
+logger.info("Pre-loading all-MiniLM-L6-v2 embeddings model...")
 try:
     from sentence_transformers import SentenceTransformer
     _ = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-    logger.info("✅ Embedding model pre-loaded successfully")
+    logger.info("✅ all-MiniLM-L6-v2 model pre-loaded successfully")
 except Exception as e:
-    logger.warning(f"⚠️ Embedding model pre-load failed (will load on first use): {e}")
+    logger.warning(f"⚠️ all-MiniLM-L6-v2 model pre-load failed (will load on first use): {e}")
 
 
 @cl.on_chat_start
